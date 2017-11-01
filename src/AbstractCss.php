@@ -165,7 +165,7 @@ abstract class AbstractCss
      *
      * @return boolean
      */
-    public function isMinify()
+    public function isMinified()
     {
         return $this->minify;
     }

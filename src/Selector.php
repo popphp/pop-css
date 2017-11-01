@@ -151,6 +151,16 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Check if selector has a descendant
+     *
+     * @return boolean
+     */
+    public function hasDescendant()
+    {
+        return (strpos($this->name, '>') !== false);
+    }
+
+    /**
      * Set tab size
      *
      * @param  int $tabSize

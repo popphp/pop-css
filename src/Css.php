@@ -45,11 +45,22 @@ class Css extends AbstractCss
     }
 
     /**
-     * Get media queries
+     * Get media query by index
+     *
+     * @param  int $i
+     * @return Media
+     */
+    public function getMedia($i)
+    {
+        return (isset($this->media[$i])) ? $this->media[$i] : null;
+    }
+
+    /**
+     * Get all media queries
      *
      * @return array
      */
-    public function getMedia()
+    public function getAllMedia()
     {
         return $this->media;
     }
@@ -126,6 +137,7 @@ class Css extends AbstractCss
         $mediaComments = [];
         $matches       = [];
         preg_match_all('~@media\b[^{]*({((?:[^{}]+|(?1))*)})~', $cssString, $matches, PREG_OFFSET_CAPTURE);
+
         if (isset($matches[0]) && isset($matches[0][0])) {
             foreach ($matches[0] as $match) {
                 // See if media query has a top-level comment
@@ -153,6 +165,7 @@ class Css extends AbstractCss
                 $mediaQuery     = trim(substr($mediaQuery, 0, strpos($mediaQuery, ' {')));
                 $mediaQueryCss  = substr($match[0], (strpos($match[0], '{') + 1));
                 $mediaQueryCss  = trim(substr($mediaQueryCss, 0, strrpos($match[0], '}')));
+
                 if (strpos($mediaQuery, 'all') !== false) {
                     $mediaType = 'all';
                 } else if (strpos($mediaQuery, 'print') !== false) {
@@ -162,6 +175,7 @@ class Css extends AbstractCss
                 } else if (strpos($mediaQuery, 'speech') !== false) {
                     $mediaType = 'speech';
                 }
+
                 if (strpos($mediaQuery, 'not') !== false) {
                     $mediaCondition = 'not';
                 }

@@ -23,7 +23,4 @@ namespace Pop\Css;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.0.0
  */
-class Exception extends \Exception
-{
-
-}
+class Exception extends \Exception {}
