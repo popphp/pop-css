@@ -1,6 +1,9 @@
 pop-css
 =======
 
+[![Build Status](https://travis-ci.org/popphp/pop-css.svg?branch=master)](https://travis-ci.org/popphp/pop-css)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-css)](http://cc.popphp.org/pop-css/)
+
 OVERVIEW
 --------
 `pop-css` provides the ability to create new CSS files as well as parse existing ones.
