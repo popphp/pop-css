@@ -294,7 +294,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return boolean
      */
-    public function isMinify()
+    public function isMinified()
     {
         return $this->minify;
     }

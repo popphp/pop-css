@@ -1,0 +1,172 @@
+/**
+ * pab.css
+ */
+html {
+    position: relative;
+    min-height: 100%;
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: 'Source Sans Pro', arial, helvetica, verdana, sans-serif;
+}
+
+body {
+    margin-bottom: 30px;
+    color: #fff;
+    font-family: 'Source Sans Pro', arial, helvetica, verdana, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, div, p {
+    color: #fff;
+    font-family: 'Source Sans Pro', arial, helvetica, verdana, sans-serif;
+}
+
+fieldset {
+    border: none;
+}
+
+a {
+    color: #00f;
+    text-decoration: none;
+}
+
+/**
+ * classes
+ *
+ * more lines of comments
+ * And some more stuff
+ */
+
+.login {
+    height: 100%;
+    margin-bottom: 0;
+    background-color: #000;
+}
+
+.footer {
+    position: absolute;
+    z-index: 10000;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    text-align: center;
+}
+
+.footer > div.text-muted {
+    padding-top: 6px;
+    padding-right: 60px;
+    padding-left: 60px;
+    font-size: 0.825em;
+}
+
+.login-footer > div {
+    font-size: 0.8em;
+    color: #fff;
+}
+
+.login-footer > div > a {
+    color: #fff;
+}
+
+.main {
+    padding-top: 50px;
+    background-color: #fff;
+}
+/**
+ * more comments
+ */
+.main-side-nav {
+    background-image: url(../img/side-nav-back.gif);
+    background-position: -140px 0px;
+    background-repeat: repeat-y;
+}
+
+/* single line comments */
+
+.login-pad {
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    min-height: 640px;
+}
+
+.login-div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    margin: auto;
+    padding: 150px 40px 40px 40px;
+    width: 25%;
+    background-image: url(../img/image.jpg);
+    background-position: center 35px;
+    background-repeat: no-repeat;
+    height: 420px;
+    background-color: #fff;
+}
+
+@media (max-width: 480px) {
+    /**
+     * This is a media query for .login-div
+     */
+    .login-div {
+        width: 50%;
+        background-color: #000;
+    }
+}
+
+.login-div > h5 {
+    margin: 0;
+    padding: 0;
+}
+
+.login-btn {
+    font-size: 1.4em;
+    color: #fff;
+    background-color: #fff;
+}
+
+.login-btn:hover {
+    color: #fff;
+    background-color: #fff;
+}
+
+.login-form > fieldset > dl > dd {
+    padding: 20px 0 0 0;
+}
+
+.login-field {
+    font-size: 1.0em;
+    height: 48px;
+}
+
+.error {
+    color: #f00;
+}
+
+input[type=submit].login-btn:focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+/**
+ * This is the beginning of the media query
+ */
+@media screen and (max-width: 800px) and (min-width: 480px) {
+    /**
+     * This is a media query for #login
+     */
+    #login {
+        margin: 10px;
+        padding: 10px;
+        background-color: #000;
+        font-family: Arial, sans-serif;
+    }
+
+    .login-field {
+        font-size: 0.825em;
+        height: 36px;
+    }
+
+}

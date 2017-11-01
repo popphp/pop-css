@@ -76,6 +76,20 @@ abstract class AbstractCss
     }
 
     /**
+     * Add CSS selectors
+     *
+     * @param  array $selectors
+     * @return self
+     */
+    public function addSelectors(array $selectors)
+    {
+        foreach ($selectors as $selector) {
+            $this->addSelector($selector);
+        }
+        return $this;
+    }
+
+    /**
      * Check if the object has CSS selector
      *
      * @param  string $selector
