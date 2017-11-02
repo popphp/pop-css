@@ -222,10 +222,17 @@ class Media extends AbstractCss
         if (null !== $this->type) {
             $css .= ' ' . $this->type;
         }
+
+        if (!empty($this->condition) || !empty($this->type)) {
+            $css .= ' and';
+        }
+
         if (count($this->features) > 0) {
+            $features = [];
             foreach ($this->features as $feature => $value) {
-                $css .= ' and (' . $feature . ': ' . $value .')';
+                $features[] = '(' . $feature . ': ' . $value .')';
             }
+            $css .= ' ' . implode(' and ', $features);
         }
 
         $css .= ' {';

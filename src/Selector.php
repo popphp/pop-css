@@ -76,9 +76,11 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param string $name
      * @param int    $tabSize
      */
-    public function __construct($name, $tabSize = 4)
+    public function __construct($name = null, $tabSize = 4)
     {
-        $this->setName($name);
+        if (null !== $name) {
+            $this->setName($name);
+        }
         $this->setTabSize($tabSize);
     }
 

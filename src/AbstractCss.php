@@ -23,7 +23,7 @@ namespace Pop\Css;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.0.0
  */
-abstract class AbstractCss
+abstract class AbstractCss implements \ArrayAccess
 {
 
     /**
@@ -182,6 +182,56 @@ abstract class AbstractCss
     public function isMinified()
     {
         return $this->minify;
+    }
+
+    /**
+     * ArrayAccess offsetExists
+     *
+     * @param  mixed $offset
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return $this->hasSelector($offset);
+    }
+
+    /**
+     * ArrayAccess offsetGet
+     *
+     * @param  mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->getSelector($offset);
+    }
+
+    /**
+     * ArrayAccess offsetSet
+     *
+     * @param  mixed $offset
+     * @param  mixed $value
+     * @throws Exception
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (!($value instanceof Selector)) {
+            throw new Exception('Error: The value passed must be an instance of Pop\Css\Selector');
+        }
+        $value->setName($offset);
+        $this->addSelector($value);
+    }
+
+    /**
+     * ArrayAccess offsetUnset
+     *
+     * @param  mixed $offset
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        $this->removeSelector($offset);
     }
 
 }

@@ -125,4 +125,27 @@ class CssTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('html {', $cssString);
     }
 
+    public function testOffsetMethods()
+    {
+        $css = new Css\Css();
+        $css->addSelectors([
+            new Css\Selector('html'),
+            new Css\Selector('#login')
+        ]);
+
+        $css['.login-div'] = new Css\Selector();
+        $this->assertTrue(isset($css['#login']));
+        $this->assertTrue(isset($css['.login-div']));
+        $this->assertInstanceOf('Pop\Css\Selector', $css['#login']);
+        unset($css['#login']);
+        $this->assertFalse(isset($css['#login']));
+    }
+
+    public function testOffsetSetException()
+    {
+        $this->expectException('Pop\Css\Exception');
+        $css = new Css\Css();
+        $css['.login-div'] = [123];
+    }
+
 }
