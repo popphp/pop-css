@@ -155,7 +155,9 @@ $media = new Media('screen');
 $media->setFeature('max-width', '480px');
 $media['#login'] = new Selector();
 $media['#login']->setProperty('width', '75%');
-$media['#login']->addComment(new Comment('And this is a comment for the #login selector within the media query.'));
+$media['#login']->addComment(
+    new Comment('And this is a comment for the #login selector within the media query.')
+);
 
 $css->addMedia($media);
 
@@ -229,7 +231,8 @@ echo $css;
 Which produces:
 
 ```css
-html{margin:0;padding:0;background-color:#fff;font-family:Arial, sans-serif;}#login{margin:0;padding:0;width:50%;}
+html{margin:0;padding:0;background-color:#fff;font-family:Arial, sans-serif;}
+#login{margin:0;padding:0;width:50%;}
 ```
 
 ### Parsing a CSS file
