@@ -98,7 +98,7 @@ class Color
      */
     public static function parseColorValues($colorString)
     {
-        if ((strpos($colorString, '(') == false) || (strpos($colorString, '(') == false)) {
+        if ((strpos($colorString, '(') === false) || (strpos($colorString, ')') === false)) {
             throw new Color\Exception('Error: The string was not in the correct color format.');
         }
         $colorString = substr($colorString, (strpos($colorString, '(') + 1));
