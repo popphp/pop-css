@@ -23,8 +23,14 @@ namespace Pop\Css;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    1.0.0
  */
-abstract class AbstractCss implements \ArrayAccess
+abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggregate
 {
+
+    /**
+     * Selectors
+     * @var array
+     */
+    protected $selectors = [];
 
     /**
      * Elements
@@ -64,12 +70,14 @@ abstract class AbstractCss implements \ArrayAccess
      */
     public function addSelector(Selector $selector)
     {
+        $this->selectors[$selector->getName()] = $selector;
+
         if ($selector->isElementSelector()) {
-            $this->elements[$selector->getName()] = $selector;
+            $this->elements[] = $selector->getName();
         } else if ($selector->isIdSelector()) {
-            $this->ids[$selector->getName()] = $selector;
+            $this->ids[] = $selector->getName();
         } else if ($selector->isClassSelector()) {
-            $this->classes[$selector->getName()] = $selector;
+            $this->classes[] = $selector->getName();
         }
 
         return $this;
@@ -97,7 +105,7 @@ abstract class AbstractCss implements \ArrayAccess
      */
     public function hasSelector($selector)
     {
-        return (isset($this->elements[$selector]) || isset($this->ids[$selector]) || isset($this->classes[$selector]));
+        return (isset($this->selectors[$selector]));
     }
 
     /**
@@ -108,17 +116,7 @@ abstract class AbstractCss implements \ArrayAccess
      */
     public function getSelector($selector)
     {
-        $result = null;
-
-        if (isset($this->elements[$selector])) {
-            $result = $this->elements[$selector];
-        } else if (isset($this->ids[$selector])) {
-            $result = $this->ids[$selector];
-        } else if (isset($this->classes[$selector])) {
-            $result = $this->classes[$selector];
-        }
-
-        return $result;
+        return (isset($this->selectors[$selector])) ? $this->selectors[$selector] : null;
     }
 
     /**
@@ -129,12 +127,15 @@ abstract class AbstractCss implements \ArrayAccess
      */
     public function removeSelector($selector)
     {
-        if (isset($this->elements[$selector])) {
-            unset($this->elements[$selector]);
-        } else if (isset($this->ids[$selector])) {
-            unset($this->ids[$selector]);
-        } else if (isset($this->classes[$selector])) {
-            unset($this->classes[$selector]);
+        if (isset($this->selectors[$selector])) {
+            unset($this->selectors[$selector]);
+            if (in_array($selector, $this->elements)) {
+                unset($this->elements[array_search($selector, $this->elements)]);
+            } else if (in_array($selector, $this->ids)) {
+                unset($this->ids[array_search($selector, $this->ids)]);
+            } else if (in_array($selector, $this->classes)) {
+                unset($this->classes[array_search($selector, $this->classes)]);
+            }
         }
 
         return $this;
@@ -182,6 +183,26 @@ abstract class AbstractCss implements \ArrayAccess
     public function isMinified()
     {
         return $this->minify;
+    }
+
+   /**
+     * Method to iterate over the properties
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->selectors);
+    }
+
+    /**
+     * Method to get the count of properties
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->selectors);
     }
 
     /**

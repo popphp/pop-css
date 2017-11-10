@@ -296,31 +296,43 @@ class Css extends AbstractCss
             }
         }
         foreach ($this->elements as $element) {
-            $element->minify($this->minify);
-            $css .= (string)$element;
-            if (!$this->minify) {
-                $css .= PHP_EOL;
+            if (isset($this->selectors[$element])) {
+                $selector = $this->selectors[$element];
+                $selector->minify($this->minify);
+                $css .= (string)$selector;
+                if (!$this->minify) {
+                    $css .= PHP_EOL;
+                }
             }
         }
         foreach ($this->ids as $id) {
-            $id->minify($this->minify);
-            $css .= (string)$id;
-            if (!$this->minify) {
-                $css .= PHP_EOL;
+            if (isset($this->selectors[$id])) {
+                $selector = $this->selectors[$id];
+                $selector->minify($this->minify);
+                $css .= (string)$selector;
+                if (!$this->minify) {
+                    $css .= PHP_EOL;
+                }
             }
         }
         foreach ($this->classes as $class) {
-            $class->minify($this->minify);
-            $css .= (string)$class;
-            if (!$this->minify) {
-                $css .= PHP_EOL;
+            if (isset($this->selectors[$class])) {
+                $selector = $this->selectors[$class];
+                $selector->minify($this->minify);
+                $css .= (string)$selector;
+                if (!$this->minify) {
+                    $css .= PHP_EOL;
+                }
             }
         }
         foreach ($this->media as $media) {
-            $media->minify($this->minify);
-            $css .= (string)$media;
-            if (!$this->minify) {
-                $css .= PHP_EOL;
+            if (isset($this->selectors[$media])) {
+                $selector = $this->selectors[$media];
+                $selector->minify($this->minify);
+                $css .= (string)$selector;
+                if (!$this->minify) {
+                    $css .= PHP_EOL;
+                }
             }
         }
 

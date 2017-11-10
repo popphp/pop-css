@@ -241,54 +241,64 @@ class Media extends AbstractCss
         }
 
         foreach ($this->elements as $element) {
-            $element->minify($this->minify);
-            $elementCss = (string)$element;
 
-            if (!$this->minify) {
-                $elementCssAry = explode(PHP_EOL, $elementCss);
-                foreach ($elementCssAry as $key => $value) {
-                    $elementCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
+            if (isset($this->selectors[$element])) {
+                $selector = $this->selectors[$element];
+                $selector->minify($this->minify);
+                $elementCss = (string)$selector;
+
+                if (!$this->minify) {
+                    $elementCssAry = explode(PHP_EOL, $elementCss);
+                    foreach ($elementCssAry as $key => $value) {
+                        $elementCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
+                    }
+                    $elementCss = implode(PHP_EOL, $elementCssAry);
                 }
-                $elementCss = implode(PHP_EOL, $elementCssAry);
-            }
 
-            $css .= $elementCss;
-            if (!$this->minify) {
-                $css .= PHP_EOL;
+                $css .= $elementCss;
+                if (!$this->minify) {
+                    $css .= PHP_EOL;
+                }
             }
         }
         foreach ($this->ids as $id) {
-            $id->minify($this->minify);
-            $idCss = (string)$id;
+            if (isset($this->selectors[$id])) {
+                $selector = $this->selectors[$id];
+                $selector->minify($this->minify);
+                $idCss = (string)$selector;
 
-            if (!$this->minify) {
-                $idCssAry = explode(PHP_EOL, $idCss);
-                foreach ($idCssAry as $key => $value) {
-                    $idCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
+                if (!$this->minify) {
+                    $idCssAry = explode(PHP_EOL, $idCss);
+                    foreach ($idCssAry as $key => $value) {
+                        $idCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
+                    }
+                    $idCss = implode(PHP_EOL, $idCssAry);
                 }
-                $idCss = implode(PHP_EOL, $idCssAry);
-            }
 
-            $css .= $idCss;
-            if (!$this->minify) {
-                $css .= PHP_EOL;
+                $css .= $idCss;
+                if (!$this->minify) {
+                    $css .= PHP_EOL;
+                }
             }
         }
         foreach ($this->classes as $class) {
-            $class->minify($this->minify);
-            $classCss = (string)$class;
+            if (isset($this->selectors[$class])) {
+                $selector = $this->selectors[$class];
+                $selector->minify($this->minify);
+                $classCss = (string)$selector;
 
-            if (!$this->minify) {
-                $classCssAry = explode(PHP_EOL, $classCss);
-                foreach ($classCssAry as $key => $value) {
-                    $classCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
+                if (!$this->minify) {
+                    $classCssAry = explode(PHP_EOL, $classCss);
+                    foreach ($classCssAry as $key => $value) {
+                        $classCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
+                    }
+                    $classCss = implode(PHP_EOL, $classCssAry);
                 }
-                $classCss = implode(PHP_EOL, $classCssAry);
-            }
 
-            $css .= $classCss;
-            if (!$this->minify) {
-                $css .= PHP_EOL;
+                $css .= $classCss;
+                if (!$this->minify) {
+                    $css .= PHP_EOL;
+                }
             }
         }
 
