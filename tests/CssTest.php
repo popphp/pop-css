@@ -112,6 +112,33 @@ class CssTest extends \PHPUnit_Framework_TestCase
         $css = Css\Css::parseFile(__DIR__ . '/tmp/bad.css');
     }
 
+    public function testCount()
+    {
+        $css = new Css\Css();
+        $css->addSelectors([
+            new Css\Selector('html'),
+            new Css\Selector('#login'),
+            new Css\Selector('.login-div')
+        ]);
+        $this->assertEquals(3, count($css));
+    }
+
+    public function testIterator()
+    {
+
+        $css = new Css\Css();
+        $css->addSelectors([
+            new Css\Selector('html'),
+            new Css\Selector('#login'),
+            new Css\Selector('.login-div')
+        ]);
+        $i = 0;
+        foreach ($css as $selector) {
+            $i++;
+        }
+        $this->assertEquals(3, $i);
+    }
+
     public function testRender()
     {
         $id = new Css\Selector('#id');

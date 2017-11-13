@@ -326,13 +326,10 @@ class Css extends AbstractCss
             }
         }
         foreach ($this->media as $media) {
-            if (isset($this->selectors[$media])) {
-                $selector = $this->selectors[$media];
-                $selector->minify($this->minify);
-                $css .= (string)$selector;
-                if (!$this->minify) {
-                    $css .= PHP_EOL;
-                }
+            $media->minify($this->minify);
+            $css .= (string)$media;
+            if (!$this->minify) {
+                $css .= PHP_EOL;
             }
         }
 
