@@ -108,17 +108,12 @@ class Css extends AbstractCss
      * Parse CSS from file
      *
      * @param  string $cssFile
-     * @throws Exception
      * @return self
      */
     public static function parseFile($cssFile)
     {
-        if (!file_exists($cssFile)) {
-            throw new Exception('Error: That file does not exist.');
-        }
-
         $css = new self();
-        $css->parseCss(file_get_contents($cssFile));
+        $css->parseCssFile($cssFile);
 
         return $css;
     }
@@ -279,6 +274,21 @@ class Css extends AbstractCss
         }
 
         return $this;
+    }
+
+    /**
+     * Parse CSS string from file
+     *
+     * @param  string $cssFile
+     * @throws Exception
+     * @return self
+     */
+    public function parseCssFile($cssFile)
+    {
+        if (!file_exists($cssFile)) {
+            throw new Exception('Error: That file does not exist.');
+        }
+        return $this->parseCss(file_get_contents($cssFile));
     }
 
     /**
