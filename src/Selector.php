@@ -386,7 +386,51 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __get($name)
     {
-        return (isset($this->properties[$name])) ? $this->properties[$name] : null;
+        if ((strpos($name, 'margin-') !== false) && !isset($this->properties[$name]) && isset($this->properties['margin'])) {
+            $values         = explode(' ', $this->properties['margin']);
+            $position       = substr($name, strpos($name, '-') + 1);
+            $positionValues = ['top' => null, 'right' => null, 'bottom' => null, 'left' => null];
+
+            switch (count($values)) {
+                case 4:
+                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[3]];
+                    break;
+                case 3:
+                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[1]];
+                    break;
+                case 2:
+                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[0], 'left' => $values[1]];
+                    break;
+                case 1:
+                    $positionValues = ['top' => $values[0], 'right' => $values[0], 'bottom' => $values[0], 'left' => $values[0]];
+                    break;
+            }
+
+            return $positionValues[$position];
+        } else if ((strpos($name, 'padding-') !== false) && !isset($this->properties[$name]) && isset($this->properties['padding'])) {
+            $values         = explode(' ', $this->properties['padding']);
+            $position       = substr($name, strpos($name, '-') + 1);
+            $positionValues = ['top' => null, 'right' => null, 'bottom' => null, 'left' => null];
+
+            switch (count($values)) {
+                case 4:
+                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[3]];
+                    break;
+                case 3:
+                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[1]];
+                    break;
+                case 2:
+                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[0], 'left' => $values[1]];
+                    break;
+                case 1:
+                    $positionValues = ['top' => $values[0], 'right' => $values[0], 'bottom' => $values[0], 'left' => $values[0]];
+                    break;
+            }
+
+            return $positionValues[$position];
+        } else {
+            return (isset($this->properties[$name])) ? $this->properties[$name] : null;
+        }
     }
 
     /**
