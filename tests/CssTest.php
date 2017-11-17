@@ -106,6 +106,12 @@ class CssTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($css->hasSelector('html'));
     }
 
+    public function testParseUri()
+    {
+        $css = Css\Css::parseUri('https://www.popphp.org/assets/css/freelancer.min.css');
+        $this->assertTrue($css->hasSelector('body'));
+    }
+
     public function testParseFileException()
     {
         $this->expectException('Pop\Css\Exception');

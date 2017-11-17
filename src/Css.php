@@ -119,6 +119,20 @@ class Css extends AbstractCss
     }
 
     /**
+     * Parse CSS from URI
+     *
+     * @param  string $cssUri
+     * @return self
+     */
+    public static function parseUri($cssUri)
+    {
+        $css = new self();
+        $css->parseCssUri($cssUri);
+
+        return $css;
+    }
+
+    /**
      * Parse CSS string
      *
      * @param  string $cssString
@@ -289,6 +303,17 @@ class Css extends AbstractCss
             throw new Exception('Error: That file does not exist.');
         }
         return $this->parseCss(file_get_contents($cssFile));
+    }
+
+    /**
+     * Parse CSS string from URI
+     *
+     * @param  string $cssUri
+     * @return self
+     */
+    public function parseCssUri($cssUri)
+    {
+        return $this->parseCss(file_get_contents($cssUri));
     }
 
     /**
