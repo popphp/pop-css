@@ -3,8 +3,9 @@
 namespace Pop\Css\Test;
 
 use Pop\Css\Color;
+use PHPUnit\Framework\TestCase;
 
-class HexTest extends \PHPUnit_Framework_TestCase
+class HexTest extends TestCase
 {
 
     public function testHex()

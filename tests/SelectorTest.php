@@ -3,8 +3,9 @@
 namespace Pop\Css\Test;
 
 use Pop\Css;
+use PHPUnit\Framework\TestCase;
 
-class SelectorTest extends \PHPUnit_Framework_TestCase
+class SelectorTest extends TestCase
 {
 
     public function testGetTabSize()

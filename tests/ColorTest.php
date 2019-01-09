@@ -3,8 +3,9 @@
 namespace Pop\Css\Test;
 
 use Pop\Css\Color;
+use PHPUnit\Framework\TestCase;
 
-class ColorTest extends \PHPUnit_Framework_TestCase
+class ColorTest extends TestCase
 {
 
     public function testCreateRgb()

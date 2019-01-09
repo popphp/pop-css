@@ -3,8 +3,9 @@
 namespace Pop\Css\Test;
 
 use Pop\Css;
+use PHPUnit\Framework\TestCase;
 
-class MediaTest extends \PHPUnit_Framework_TestCase
+class MediaTest extends TestCase
 {
 
     public function testConstructor()

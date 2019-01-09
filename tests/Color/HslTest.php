@@ -3,8 +3,9 @@
 namespace Pop\Css\Test;
 
 use Pop\Css\Color;
+use PHPUnit\Framework\TestCase;
 
-class HslTest extends \PHPUnit_Framework_TestCase
+class HslTest extends TestCase
 {
 
     public function testHsl()
