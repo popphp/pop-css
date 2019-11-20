@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Css;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    1.0.7
+ * @version    1.0.8
  */
 class Css extends AbstractCss
 {
@@ -300,7 +300,7 @@ class Css extends AbstractCss
     public function parseCssFile($cssFile)
     {
         if (!file_exists($cssFile)) {
-            throw new Exception('Error: That file does not exist.');
+            throw new Exception("Error: That file '" . $cssFile . "' does not exist.");
         }
         return $this->parseCss(file_get_contents($cssFile));
     }
