@@ -130,7 +130,7 @@ class SelectorTest extends TestCase
         $selector->margin = 0;
         $selector['padding'] = 0;
         $css = (string)$selector;
-        $this->assertContains('div{', $css);
+        $this->assertStringContainsString('div{', $css);
     }
 
 }

@@ -1,7 +1,7 @@
 pop-css
 =======
 
-[![Build Status](https://travis-ci.org/popphp/pop-css.svg?branch=master)](https://travis-ci.org/popphp/pop-css)
+[![Build Status](https://github.com/popphp/pop-css/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-css/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-css)](http://cc.popphp.org/pop-css/)
 
 OVERVIEW

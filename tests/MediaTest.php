@@ -31,7 +31,7 @@ class MediaTest extends TestCase
         $media->addSelector($html);
 
         $cssString = (string)$media;
-        $this->assertContains('html {', $cssString);
+        $this->assertStringContainsString('html {', $cssString);
     }
 
 }

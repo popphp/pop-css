@@ -156,7 +156,7 @@ class CssTest extends TestCase
         $css = Css\Css::parseFile(__DIR__ . '/tmp/styles.css');
         $css->addSelector($id);
         $cssString = (string)$css;
-        $this->assertContains('html {', $cssString);
+        $this->assertStringContainsString('html {', $cssString);
     }
 
     public function testOffsetMethods()
