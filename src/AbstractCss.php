@@ -13,6 +13,8 @@
  */
 namespace Pop\Css;
 
+use ReturnTypeWillChange;
+
 /**
  * Abstract CSS class
  *
@@ -190,7 +192,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->selectors);
     }
@@ -200,7 +202,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->selectors);
     }
@@ -211,7 +213,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->hasSelector($offset);
     }
@@ -222,6 +224,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @param  mixed $offset
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->getSelector($offset);
@@ -235,6 +238,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @throws Exception
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (!($value instanceof Selector)) {
@@ -250,6 +254,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @param  mixed $offset
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->removeSelector($offset);

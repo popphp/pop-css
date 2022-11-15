@@ -13,6 +13,8 @@
  */
 namespace Pop\Css\Color;
 
+use ReturnTypeWillChange;
+
 /**
  * Pop CSS HSL color class
  *
@@ -375,7 +377,7 @@ class Hsl implements \ArrayAccess, ColorInterface
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return (($offset == 'h') || ($offset == 's') || ($offset == 'l') || ($offset == 'a'));
     }
@@ -387,6 +389,7 @@ class Hsl implements \ArrayAccess, ColorInterface
      * @throws Exception
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         switch ($offset) {
@@ -415,6 +418,7 @@ class Hsl implements \ArrayAccess, ColorInterface
      * @throws Exception
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         switch ($offset) {
@@ -442,6 +446,7 @@ class Hsl implements \ArrayAccess, ColorInterface
      * @throws Exception
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new Exception('You cannot unset the properties of this color object.');

@@ -13,6 +13,8 @@
  */
 namespace Pop\Css;
 
+use ReturnTypeWillChange;
+
 /**
  * Pop CSS selector class
  *
@@ -306,7 +308,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->properties);
     }
@@ -316,7 +318,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->properties);
     }
@@ -463,7 +465,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->__isset($offset);
     }
@@ -474,6 +476,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $offset
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);
@@ -486,6 +489,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $value
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->__set($offset, $value);
@@ -497,6 +501,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $offset
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->__unset($offset);

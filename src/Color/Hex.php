@@ -13,6 +13,8 @@
  */
 namespace Pop\Css\Color;
 
+use ReturnTypeWillChange;
+
 /**
  * Pop CSS Hex color class
  *
@@ -341,7 +343,7 @@ class Hex implements \ArrayAccess, ColorInterface
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return (($offset == 'r') || ($offset == 'g') || ($offset == 'b') || ($offset == 'hex'));
     }
@@ -353,6 +355,7 @@ class Hex implements \ArrayAccess, ColorInterface
      * @throws Exception
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         switch ($offset) {
@@ -381,6 +384,7 @@ class Hex implements \ArrayAccess, ColorInterface
      * @throws Exception
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         switch ($offset) {
@@ -408,6 +412,7 @@ class Hex implements \ArrayAccess, ColorInterface
      * @throws Exception
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new Exception('You cannot unset the properties of this color object.');
