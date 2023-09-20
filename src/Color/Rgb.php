@@ -245,7 +245,7 @@ class Rgb implements \ArrayAccess, ColorInterface
      */
     public function toHex()
     {
-        $hex = dechex($this->r) . dechex($this->g) . dechex($this->b);
+        $hex = str_pad(dechex($this->r), 2, '0', STR_PAD_LEFT) . str_pad(dechex($this->g), 2, '0', STR_PAD_LEFT) . str_pad(dechex($this->b), 2, '0', STR_PAD_LEFT);
         return new Hex($hex);
     }
 
