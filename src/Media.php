@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,56 +19,56 @@ namespace Pop\Css;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    1.1.0
+ * @version    2.0.0
  */
 class Media extends AbstractCss
 {
 
     /**
      * Media type
-     * @var string
+     * @var ?string
      */
-    protected $type = null;
+    protected ?string $type = null;
 
     /**
      * Media condition
-     * @var string
+     * @var ?string
      */
-    protected $condition = null;
+    protected ?string $condition = null;
 
     /**
      * Media features
      * @var array
      */
-    protected $features = [];
+    protected array $features = [];
 
     /**
      * Tab size
      * @var int
      */
-    protected $tabSize = 4;
+    protected int $tabSize = 4;
 
     /**
      * Constructor
      *
      * Instantiate the CSS media object
      *
-     * @param string $type
-     * @param array  $features
-     * @param string $condition
-     * @param int    $tabSize
+     * @param ?string $type
+     * @param ?array  $features
+     * @param ?string $condition
+     * @param int     $tabSize
      */
-    public function __construct($type = null, array $features = null, $condition = null, $tabSize = 4)
+    public function __construct(?string $type = null, ?array $features = null, ?string $condition = null, $tabSize = 4)
     {
-        if (null !== $type) {
+        if ($type !== null) {
             $this->setType($type);
         }
-        if (null !== $features) {
+        if ($features !== null) {
             $this->setFeatures($features);
         }
-        if (null !== $condition) {
+        if ($condition !== null) {
             $this->setCondition($condition);
         }
         $this->setTabSize($tabSize);
@@ -78,9 +78,9 @@ class Media extends AbstractCss
      * Set type
      *
      * @param  string $type
-     * @return self
+     * @return Media
      */
-    public function setType($type)
+    public function setType(string $type): Media
     {
         $this->type = $type;
         return $this;
@@ -89,9 +89,9 @@ class Media extends AbstractCss
     /**
      * Get type
      *
-     * @return string
+     * @return string|null
      */
-    public function getType()
+    public function getType(): string|null
     {
         return $this->type;
     }
@@ -99,10 +99,10 @@ class Media extends AbstractCss
     /**
      * Set condition
      *
-     * @param  string $condition
-     * @return self
+     * @param  ?string $condition
+     * @return Media
      */
-    public function setCondition($condition = null)
+    public function setCondition(?string $condition = null): Media
     {
         $this->condition = $condition;
         return $this;
@@ -111,9 +111,9 @@ class Media extends AbstractCss
     /**
      * Get condition
      *
-     * @return string
+     * @return string|null
      */
-    public function getCondition()
+    public function getCondition(): string|null
     {
         return $this->condition;
     }
@@ -122,11 +122,11 @@ class Media extends AbstractCss
      * Set tab size
      *
      * @param  int $tabSize
-     * @return self
+     * @return Media
      */
-    public function setTabSize($tabSize)
+    public function setTabSize(int $tabSize): Media
     {
-        $this->tabSize = (int)$tabSize;
+        $this->tabSize = $tabSize;
         return $this;
     }
 
@@ -135,7 +135,7 @@ class Media extends AbstractCss
      *
      * @return int
      */
-    public function getTabSize()
+    public function getTabSize(): int
     {
         return $this->tabSize;
     }
@@ -144,9 +144,9 @@ class Media extends AbstractCss
      * Set features
      *
      * @param  array $features
-     * @return self
+     * @return Media
      */
-    public function setFeatures(array $features)
+    public function setFeatures(array $features): Media
     {
         foreach ($features as $feature => $value) {
             $this->setFeature($feature, $value);
@@ -159,7 +159,7 @@ class Media extends AbstractCss
      *
      * @return array
      */
-    public function getFeatures()
+    public function getFeatures(): array
     {
         return $this->features;
     }
@@ -169,9 +169,9 @@ class Media extends AbstractCss
      *
      * @param  string $feature
      * @param  string $value
-     * @return self
+     * @return Media
      */
-    public function setFeature($feature, $value)
+    public function setFeature(string $feature, string $value): Media
     {
         $this->features[$feature] = $value;
         return $this;
@@ -181,20 +181,20 @@ class Media extends AbstractCss
      * Get feature
      *
      * @param  string $feature
-     * @return string
+     * @return string|null
      */
-    public function getFeature($feature)
+    public function getFeature(string $feature): string|null
     {
-        return (isset($this->features[$feature])) ? $this->features[$feature] : null;
+        return $this->features[$feature] ?? null;
     }
 
     /**
      * Does media query have feature
      *
      * @param  string $feature
-     * @return boolean
+     * @return bool
      */
-    public function hasFeature($feature)
+    public function hasFeature(string $feature): bool
     {
         return isset($this->features[$feature]);
     }
@@ -204,22 +204,22 @@ class Media extends AbstractCss
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $css = '';
 
         if (!$this->minify) {
             foreach ($this->comments as $comment) {
-                $css .= (string)$comment . PHP_EOL;
+                $css .= $comment . PHP_EOL;
             }
         }
 
         $css .= ($this->minify) ? ' @media': '@media';
 
-        if (null !== $this->condition) {
+        if ($this->condition !== null) {
             $css .= ' ' . $this->condition;
         }
-        if (null !== $this->type) {
+        if ($this->type !== null) {
             $css .= ' ' . $this->type;
         }
 
@@ -315,7 +315,7 @@ class Media extends AbstractCss
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

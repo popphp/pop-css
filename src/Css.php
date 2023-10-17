@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Css;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    1.1.0
+ * @version    2.0.0
  */
 class Css extends AbstractCss
 {
@@ -30,15 +30,15 @@ class Css extends AbstractCss
      * Media queries
      * @var array
      */
-    protected $media = [];
+    protected array $media = [];
 
     /**
      * Add media query
      *
      * @param  Media $media
-     * @return self
+     * @return Css
      */
-    public function addMedia(Media $media)
+    public function addMedia(Media $media): Css
     {
         $this->media[] = $media;
         return $this;
@@ -48,11 +48,11 @@ class Css extends AbstractCss
      * Get media query by index
      *
      * @param  int $i
-     * @return Media
+     * @return Media|null
      */
-    public function getMedia($i)
+    public function getMedia(int $i): Media|null
     {
-        return (isset($this->media[$i])) ? $this->media[$i] : null;
+        return $this->media[$i] ?? null;
     }
 
     /**
@@ -60,7 +60,7 @@ class Css extends AbstractCss
      *
      * @return array
      */
-    public function getAllMedia()
+    public function getAllMedia(): array
     {
         return $this->media;
     }
@@ -69,9 +69,9 @@ class Css extends AbstractCss
      * Remove media query by index
      *
      * @param  int $i
-     * @return self
+     * @return Css
      */
-    public function removeMedia($i)
+    public function removeMedia(int $i): Css
     {
         if (isset($this->media[(int)$i])) {
             unset($this->media[(int)$i]);
@@ -82,9 +82,9 @@ class Css extends AbstractCss
     /**
      * Remove all media queries
      *
-     * @return self
+     * @return Css
      */
-    public function removeAllMedia()
+    public function removeAllMedia(): Css
     {
         $this->media = [];
         return $this;
@@ -94,9 +94,9 @@ class Css extends AbstractCss
      * Parse CSS string
      *
      * @param  string $cssString
-     * @return self
+     * @return Css
      */
-    public static function parseString($cssString)
+    public static function parseString(string $cssString): Css
     {
         $css = new self();
         $css->parseCss($cssString);
@@ -108,9 +108,10 @@ class Css extends AbstractCss
      * Parse CSS from file
      *
      * @param  string $cssFile
-     * @return self
+     * @throws Exception
+     * @return Css
      */
-    public static function parseFile($cssFile)
+    public static function parseFile(string $cssFile): Css
     {
         $css = new self();
         $css->parseCssFile($cssFile);
@@ -122,9 +123,9 @@ class Css extends AbstractCss
      * Parse CSS from URI
      *
      * @param  string $cssUri
-     * @return self
+     * @return Css
      */
-    public static function parseUri($cssUri)
+    public static function parseUri(string $cssUri): Css
     {
         $css = new self();
         $css->parseCssUri($cssUri);
@@ -136,9 +137,9 @@ class Css extends AbstractCss
      * Parse CSS string
      *
      * @param  string $cssString
-     * @return self
+     * @return Css
      */
-    public function parseCss($cssString)
+    public function parseCss(string $cssString): Css
     {
 
         // Parse media queries
@@ -175,24 +176,24 @@ class Css extends AbstractCss
                 $mediaQueryCss  = substr($match[0], (strpos($match[0], '{') + 1));
                 $mediaQueryCss  = trim(substr($mediaQueryCss, 0, strrpos($match[0], '}')));
 
-                if (strpos($mediaQuery, 'all') !== false) {
+                if (str_contains($mediaQuery, 'all')) {
                     $mediaType = 'all';
-                } else if (strpos($mediaQuery, 'print') !== false) {
+                } else if (str_contains($mediaQuery, 'print')) {
                     $mediaType = 'print';
-                } else if (strpos($mediaQuery, 'screen') !== false) {
+                } else if (str_contains($mediaQuery, 'screen')) {
                     $mediaType = 'screen';
-                } else if (strpos($mediaQuery, 'speech') !== false) {
+                } else if (str_contains($mediaQuery, 'speech')) {
                     $mediaType = 'speech';
                 }
 
-                if (strpos($mediaQuery, 'not') !== false) {
+                if (str_contains($mediaQuery, 'not')) {
                     $mediaCondition = 'not';
                 }
-                if (strpos($mediaQuery, 'only') !== false) {
+                if (str_contains($mediaQuery, 'only')) {
                     $mediaCondition = 'only';
                 }
 
-                if ((strpos($mediaQuery, '(') !== false) && (strpos($mediaQuery, ')') !== false)) {
+                if ((str_contains($mediaQuery, '(')) && (str_contains($mediaQuery, ')'))) {
                     $features = substr($mediaQuery, strpos($mediaQuery, '('));
                     $features = substr($features, 0, (strrpos($features, ')') + 1));
                     $features = explode('and', $features);
@@ -205,7 +206,7 @@ class Css extends AbstractCss
                     }
                 }
                 $media = new Media($mediaType, $mediaFeatures, $mediaCondition);
-                if (null !== $mediaComment) {
+                if ($mediaComment !== null) {
                     $media->addComment(new Comment(trim(implode(PHP_EOL, $mediaComment))));
                 }
 
@@ -262,7 +263,7 @@ class Css extends AbstractCss
                 foreach ($comment as $key => $line) {
                     $comment[$key] = trim(str_replace(['/*', '*/', '*'], ['', '', ''], $line));
                 }
-                if (null === $selectorName) {
+                if ($selectorName === null) {
                     $this->addComment(new Comment(trim(implode(PHP_EOL, $comment))));
                 } else {
                     $comments[$selectorName] = new Comment(trim(implode(PHP_EOL, $comment)));
@@ -295,9 +296,9 @@ class Css extends AbstractCss
      *
      * @param  string $cssFile
      * @throws Exception
-     * @return self
+     * @return Css
      */
-    public function parseCssFile($cssFile)
+    public function parseCssFile(string $cssFile): Css
     {
         if (!file_exists($cssFile)) {
             throw new Exception("Error: That file '" . $cssFile . "' does not exist.");
@@ -309,9 +310,9 @@ class Css extends AbstractCss
      * Parse CSS string from URI
      *
      * @param  string $cssUri
-     * @return self
+     * @return Css
      */
-    public function parseCssUri($cssUri)
+    public function parseCssUri(string $cssUri): Css
     {
         return $this->parseCss(file_get_contents($cssUri));
     }
@@ -321,7 +322,7 @@ class Css extends AbstractCss
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $css = '';
 
@@ -376,7 +377,7 @@ class Css extends AbstractCss
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
@@ -387,7 +388,7 @@ class Css extends AbstractCss
      * @param  string $cssString
      * @return array
      */
-    protected function parseSelectors($cssString)
+    protected function parseSelectors(string $cssString): array
     {
         $selectors = [];
 

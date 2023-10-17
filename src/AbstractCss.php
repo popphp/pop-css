@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,7 +13,7 @@
  */
 namespace Pop\Css;
 
-use ReturnTypeWillChange;
+use ArrayIterator;
 
 /**
  * Abstract CSS class
@@ -21,9 +21,9 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    1.1.0
+ * @version    2.0.0
  */
 abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -32,45 +32,45 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * Selectors
      * @var array
      */
-    protected $selectors = [];
+    protected array $selectors = [];
 
     /**
      * Elements
      * @var array
      */
-    protected $elements = [];
+    protected array $elements = [];
 
     /**
      * IDs
      * @var array
      */
-    protected $ids = [];
+    protected array $ids = [];
 
     /**
      * Classes
      * @var array
      */
-    protected $classes = [];
+    protected array $classes = [];
 
     /**
      * Comments
      * @var array
      */
-    protected $comments = [];
+    protected array $comments = [];
 
     /**
      * Minify flag
-     * @var boolean
+     * @var bool
      */
-    protected $minify = false;
+    protected bool $minify = false;
 
     /**
      * Add CSS selector
      *
      * @param  Selector $selector
-     * @return self
+     * @return AbstractCss
      */
-    public function addSelector(Selector $selector)
+    public function addSelector(Selector $selector): AbstractCss
     {
         $this->selectors[$selector->getName()] = $selector;
 
@@ -89,9 +89,9 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * Add CSS selectors
      *
      * @param  array $selectors
-     * @return self
+     * @return AbstractCss
      */
-    public function addSelectors(array $selectors)
+    public function addSelectors(array $selectors): AbstractCss
     {
         foreach ($selectors as $selector) {
             $this->addSelector($selector);
@@ -103,9 +103,9 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * Check if the object has CSS selector
      *
      * @param  string $selector
-     * @return boolean
+     * @return bool
      */
-    public function hasSelector($selector)
+    public function hasSelector(string $selector): bool
     {
         return (isset($this->selectors[$selector]));
     }
@@ -114,20 +114,20 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * Get CSS selector
      *
      * @param  string $selector
-     * @return Selector
+     * @return Selector|null
      */
-    public function getSelector($selector)
+    public function getSelector(string $selector): Selector|null
     {
-        return (isset($this->selectors[$selector])) ? $this->selectors[$selector] : null;
+        return $this->selectors[$selector] ?? null;
     }
 
     /**
      * Get CSS selector
      *
      * @param  string $selector
-     * @return self
+     * @return AbstractCss
      */
-    public function removeSelector($selector)
+    public function removeSelector(string $selector): AbstractCss
     {
         if (isset($this->selectors[$selector])) {
             unset($this->selectors[$selector]);
@@ -147,9 +147,9 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * Add CSS comment
      *
      * @param  Comment $comment
-     * @return self
+     * @return AbstractCss
      */
-    public function addComment(Comment $comment)
+    public function addComment(Comment $comment): AbstractCss
     {
         $this->comments[] = $comment;
         return $this;
@@ -160,7 +160,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      *
      * @return array
      */
-    public function getComments()
+    public function getComments(): array
     {
         return $this->comments;
     }
@@ -168,21 +168,21 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
     /**
      * Set minify flag
      *
-     * @param  boolean $minify
-     * @return self
+     * @param  bool $minify
+     * @return AbstractCss
      */
-    public function minify($minify = true)
+    public function minify(bool $minify = true): AbstractCss
     {
-        $this->minify = (bool)$minify;
+        $this->minify = $minify;
         return $this;
     }
 
     /**
      * Check if minify flag is set
      *
-     * @return boolean
+     * @return bool
      */
-    public function isMinified()
+    public function isMinified(): bool
     {
         return $this->minify;
     }
@@ -190,11 +190,11 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
    /**
      * Method to iterate over the properties
      *
-     * @return \ArrayIterator
+     * @return ArrayIterator
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->selectors);
+        return new ArrayIterator($this->selectors);
     }
 
     /**
@@ -211,9 +211,9 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * ArrayAccess offsetExists
      *
      * @param  mixed $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->hasSelector($offset);
     }
@@ -224,8 +224,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @param  mixed $offset
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->getSelector($offset);
     }
@@ -238,8 +237,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @throws Exception
      * @return void
      */
-    #[ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (!($value instanceof Selector)) {
             throw new Exception('Error: The value passed must be an instance of Pop\Css\Selector');
@@ -254,8 +252,7 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @param  mixed $offset
      * @return void
      */
-    #[ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->removeSelector($offset);
     }

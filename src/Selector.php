@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,7 +13,7 @@
  */
 namespace Pop\Css;
 
-use ReturnTypeWillChange;
+use ArrayIterator;
 
 /**
  * Pop CSS selector class
@@ -21,66 +21,66 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    1.1.0
+ * @version    2.0.0
  */
 class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
 {
 
     /**
      * Selector name
-     * @var string
+     * @var ?string
      */
-    protected $name = null;
+    protected ?string $name = null;
 
     /**
      * Properties
      * @var array
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     /**
      * Tab size
      * @var int
      */
-    protected $tabSize = 4;
+    protected int $tabSize = 4;
 
     /**
      * Is ID selector flag
-     * @var boolean
+     * @var bool
      */
-    protected $isId = false;
+    protected bool $isId = false;
 
     /**
      * Is class selector flag
-     * @var boolean
+     * @var bool
      */
-    protected $isClass = false;
+    protected bool $isClass = false;
 
     /**
      * Comments
      * @var array
      */
-    protected $comments = [];
+    protected array $comments = [];
 
     /**
      * Minify flag
-     * @var boolean
+     * @var bool
      */
-    protected $minify = false;
+    protected bool $minify = false;
 
     /**
      * Constructor
      *
      * Instantiate the CSS selector object
      *
-     * @param string $name
+     * @param ?string $name
      * @param int    $tabSize
      */
-    public function __construct($name = null, $tabSize = 4)
+    public function __construct(?string $name = null, int $tabSize = 4)
     {
-        if (null !== $name) {
+        if ($name !== null) {
             $this->setName($name);
         }
         $this->setTabSize($tabSize);
@@ -90,14 +90,14 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * Set name
      *
      * @param  string $name
-     * @return self
+     * @return Selector
      */
-    public function setName($name)
+    public function setName(string $name): Selector
     {
-        if (strpos($name, '.') !== false) {
+        if (str_contains($name, '.')) {
             $this->isClass = true;
         }
-        if (strpos($name, '#') !== false) {
+        if (str_contains($name, '#')) {
             $this->isId = true;
         }
         $this->name = $name;
@@ -107,9 +107,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Get name
      *
-     * @return string
+     * @return string|null
      */
-    public function getName()
+    public function getName(): string|null
     {
         return $this->name;
     }
@@ -117,9 +117,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Check if is element selector
      *
-     * @return boolean
+     * @return bool
      */
-    public function isElementSelector()
+    public function isElementSelector(): bool
     {
         return (!($this->isId) && !($this->isClass));
     }
@@ -127,9 +127,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Check if is ID selector
      *
-     * @return boolean
+     * @return bool
      */
-    public function isIdSelector()
+    public function isIdSelector(): bool
     {
         return $this->isId;
     }
@@ -137,9 +137,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Check if is class selector
      *
-     * @return boolean
+     * @return bool
      */
-    public function isClassSelector()
+    public function isClassSelector(): bool
     {
         return $this->isClass;
     }
@@ -147,32 +147,32 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Check if is multiple selector
      *
-     * @return boolean
+     * @return bool
      */
-    public function isMultipleSelector()
+    public function isMultipleSelector(): bool
     {
-        return (strpos($this->name, ',') !== false);
+        return (str_contains($this->name, ','));
     }
 
     /**
      * Check if selector has a descendant
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasDescendant()
+    public function hasDescendant(): bool
     {
-        return (strpos($this->name, '>') !== false);
+        return (str_contains($this->name, '>'));
     }
 
     /**
      * Set tab size
      *
      * @param  int $tabSize
-     * @return self
+     * @return Selector
      */
-    public function setTabSize($tabSize)
+    public function setTabSize(int $tabSize): Selector
     {
-        $this->tabSize = (int)$tabSize;
+        $this->tabSize = $tabSize;
         return $this;
     }
 
@@ -181,7 +181,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function getTabSize()
+    public function getTabSize(): int
     {
         return $this->tabSize;
     }
@@ -191,9 +191,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @param  string $property
      * @param  string $value
-     * @return self
+     * @return Selector
      */
-    public function setProperty($property, $value)
+    public function setProperty(string $property, string $value): Selector
     {
         $this->properties[$property] = $value;
         return $this;
@@ -203,9 +203,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * Set properties
      *
      * @param  array $properties
-     * @return self
+     * @return Selector
      */
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): Selector
     {
         foreach ($properties as $property => $value) {
             $this->setProperty($property, $value);
@@ -217,9 +217,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * Check if selector has property
      *
      * @param  string $property
-     * @return boolean
+     * @return bool
      */
-    public function hasProperty($property)
+    public function hasProperty(string $property): bool
     {
         return isset($this->properties[$property]);
     }
@@ -229,7 +229,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return array
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
@@ -238,20 +238,20 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * Get property
      *
      * @param  string $property
-     * @return string
+     * @return string|null
      */
-    public function getProperty($property)
+    public function getProperty(string $property): string|null
     {
-        return (isset($this->properties[$property])) ? $this->properties[$property] : null;
+        return $this->properties[$property] ?? null;
     }
 
     /**
      * Remove property
      *
      * @param  string $property
-     * @return self
+     * @return Selector
      */
-    public function removeProperty($property)
+    public function removeProperty(string $property): Selector
     {
         if (isset($this->properties[$property])) {
             unset($this->properties[$property]);
@@ -263,9 +263,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * Add CSS comment
      *
      * @param  Comment $comment
-     * @return self
+     * @return Selector
      */
-    public function addComment(Comment $comment)
+    public function addComment(Comment $comment): Selector
     {
         $this->comments[] = $comment;
         return $this;
@@ -276,7 +276,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return array
      */
-    public function getComments()
+    public function getComments(): array
     {
         return $this->comments;
     }
@@ -284,21 +284,21 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Set minify flag
      *
-     * @param  boolean $minify
-     * @return self
+     * @param  bool $minify
+     * @return Selector
      */
-    public function minify($minify = true)
+    public function minify(bool $minify = true): Selector
     {
-        $this->minify = (bool)$minify;
+        $this->minify = $minify;
         return $this;
     }
 
     /**
      * Check if minify flag is set
      *
-     * @return boolean
+     * @return bool
      */
-    public function isMinified()
+    public function isMinified(): bool
     {
         return $this->minify;
     }
@@ -306,11 +306,11 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Method to iterate over the properties
      *
-     * @return \ArrayIterator
+     * @return ArrayIterator
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->properties);
+        return new ArrayIterator($this->properties);
     }
 
     /**
@@ -328,7 +328,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $css = '';
 
@@ -363,7 +363,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
@@ -375,7 +375,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $value
      * @return void
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->properties[$name] = $value;
     }
@@ -386,9 +386,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  string $name
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
-        if ((strpos($name, 'margin-') !== false) && !isset($this->properties[$name]) && isset($this->properties['margin'])) {
+        if ((str_contains($name, 'margin-')) && !isset($this->properties[$name]) && isset($this->properties['margin'])) {
             $values         = explode(' ', $this->properties['margin']);
             $position       = substr($name, strpos($name, '-') + 1);
             $positionValues = ['top' => null, 'right' => null, 'bottom' => null, 'left' => null];
@@ -409,7 +409,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
             }
 
             return $positionValues[$position];
-        } else if ((strpos($name, 'padding-') !== false) && !isset($this->properties[$name]) && isset($this->properties['padding'])) {
+        } else if ((str_contains($name, 'padding-')) && !isset($this->properties[$name]) && isset($this->properties['padding'])) {
             $values         = explode(' ', $this->properties['padding']);
             $position       = substr($name, strpos($name, '-') + 1);
             $positionValues = ['top' => null, 'right' => null, 'bottom' => null, 'left' => null];
@@ -439,9 +439,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * Magic method to return the isset value of $this->properties[$name]
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($this->properties[$name]);
     }
@@ -452,7 +452,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  string $name
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         if (isset($this->properties[$name])) {
             unset($this->properties[$name]);
@@ -463,9 +463,9 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * ArrayAccess offsetExists
      *
      * @param  mixed $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->__isset($offset);
     }
@@ -476,8 +476,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $offset
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->__get($offset);
     }
@@ -489,8 +488,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $value
      * @return void
      */
-    #[ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->__set($offset, $value);
     }
@@ -501,8 +499,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $offset
      * @return void
      */
-    #[ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->__unset($offset);
     }

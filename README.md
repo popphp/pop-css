@@ -18,6 +18,13 @@ Install `pop-css` using Composer.
 
     composer require popphp/pop-css
 
+Or, require it in your composer.json file
+
+    "require": {
+        "popphp/pop-css" : "^2.0.0"
+    }
+
+
 BASIC USAGE
 -----------
 
