@@ -4,14 +4,27 @@ pop-css
 [![Build Status](https://github.com/popphp/pop-css/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-css/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-css)](http://cc.popphp.org/pop-css/)
 
-OVERVIEW
+[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
+[![Join the chat at https://discord.gg/D9JBxPa5](https://media.popphp.org/img/discord.svg)](https://discord.gg/D9JBxPa5)
+
+* [Overview](#overview)
+* [Install](#install)
+* [Quickstart](#quickstart)
+* [Selectors](#selectors)
+* [Media Queries](#media-queries)
+* [Comments](#comments)
+
+Overview
 --------
 `pop-css` provides the ability to create new CSS files as well as parse existing ones.
-There is support for media queries and comments as well.
+There is support for a number of CSS-based features such as media queries, comments
+and even minification.
 
 `pop-css` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
-INSTALL
+[Top](#pop-css)
+
+Install
 -------
 
 Install `pop-css` using Composer.
@@ -24,13 +37,15 @@ Or, require it in your composer.json file
         "popphp/pop-css" : "^2.0.0"
     }
 
+[Top](#pop-css)
 
-BASIC USAGE
------------
+Quickstart
+----------
 
-### Creating CSS
+In creating CSS, you will use the main CSS object and create and add selector, media and comment objects
+to it to build your CSS.
 
-You can create CSS from scratch like this:
+**Adding some selectors**
 
 ```php
 use Pop\Css\Css;
@@ -40,15 +55,17 @@ $css = new Css();
 
 $html = new Selector('html');
 $html->setProperties([
-    'margin'  => 0,
-    'padding' => 0,
+    'margin'           => 0,
+    'padding'          => 0,
     'background-color' => '#fff',
-    'font-family' => 'Arial, sans-serif'
+    'font-family'      => 'Arial, sans-serif'
 ]);
 
 $login = new Selector('#login');
-$login->setProperty('margin', 0);
-$login->setProperty('padding', 0);
+$login->setProperty('margin', 0)
+    ->setProperty('padding', 0);
+
+$css->addSelectors([$html, $login]);
 
 echo $css;
 ```
@@ -69,184 +86,19 @@ html {
 }
 ```
 
-### Using Media Queries
+[Top](#pop-css)
 
-You can also add media queries to your CSS as well:
+Selectors
+---------
 
-```php
-use Pop\Css\Css;
-use Pop\Css\Media;
-use Pop\Css\Selector;
+[Top](#pop-css)
 
-$css = new Css();
+Media Queries
+-------------
 
-$html = new Selector('html');
-$html->setProperties([
-    'margin'  => 0,
-    'padding' => 0,
-    'background-color' => '#fff',
-    'font-family' => 'Arial, sans-serif'
-]);
+[Top](#pop-css)
 
-$login = new Selector('#login');
-$login->setProperty('margin', 0);
-$login->setProperty('padding', 0);
-$login->setProperty('width', '50%');
+Comments
+--------
 
-$css->addSelectors([$html, $login]);
-
-$media = new Media('screen');
-$media->setFeature('max-width', '480px');
-$media['#login'] = new Selector();
-$media['#login']->setProperty('width', '75%');
-
-$css->addMedia($media);
-
-echo $css;
-```
-
-The above code will produce:
-
-```css
-html {
-    margin: 0;
-    padding: 0;
-    background-color: #fff;
-    font-family: Arial, sans-serif;
-}
-
-#login {
-    margin: 0;
-    padding: 0;
-    width: 50%;
-}
-
-@media screen and (max-width: 480px) {
-    #login {
-        width: 75%;
-    }
-    
-}
-```
-
-### Adding Comments
-
-You can add comments to the css as well:
-
-```php
-use Pop\Css\Css;
-use Pop\Css\Media;
-use Pop\Css\Selector;
-use Pop\Css\Comment;
-
-$css = new Css();
-$css->addComment(new Comment('This is a top level comment'));
-
-$html = new Selector('html');
-$html->setProperties([
-    'margin'  => 0,
-    'padding' => 0,
-    'background-color' => '#fff',
-    'font-family' => 'Arial, sans-serif'
-]);
-
-$login = new Selector('#login');
-$login->setProperty('margin', 0);
-$login->setProperty('padding', 0);
-$login->setProperty('width', '50%');
-$login->addComment(new Comment('This is a comment for the #login selector'));
-
-$css->addSelectors([$html, $login]);
-
-$media = new Media('screen');
-$media->setFeature('max-width', '480px');
-$media['#login'] = new Selector();
-$media['#login']->setProperty('width', '75%');
-$media['#login']->addComment(
-    new Comment('And this is a comment for the #login selector within the media query.')
-);
-
-$css->addMedia($media);
-
-echo $css;
-```
-
-The above code will produce:
-
-```css
-/**
- * This is a top level comment
- */
-
-html {
-    margin: 0;
-    padding: 0;
-    background-color: #fff;
-    font-family: Arial, sans-serif;
-}
-
-/**
- * This is a comment for the #login selector
- */
-
-#login {
-    margin: 0;
-    padding: 0;
-    width: 50%;
-}
-
-@media screen and (max-width: 480px) {
-    /**
-     * And this is a comment for the #login selector within the media query.
-     */
-    
-    #login {
-        width: 75%;
-    }
-    
-}
-```
-
-### Minifying the CSS
-
-Minify the CSS like this:
-
-```php
-use Pop\Css\Css;
-use Pop\Css\Selector;
-
-$css = new Css();
-
-$html = new Selector('html');
-$html->setProperties([
-    'margin'  => 0,
-    'padding' => 0,
-    'background-color' => '#fff',
-    'font-family' => 'Arial, sans-serif'
-]);
-
-$login = new Selector('#login');
-$login->setProperty('margin', 0);
-$login->setProperty('padding', 0);
-$login->setProperty('width', '50%');
-
-$css->addSelectors([$html, $login]);
-$css->minify();
-echo $css;
-```
-
-Which produces:
-
-```css
-html{margin:0;padding:0;background-color:#fff;font-family:Arial, sans-serif;}
-#login{margin:0;padding:0;width:50%;}
-```
-
-### Parsing a CSS file
-
-```php
-use Pop\Css\Css;
-$css = Css::parseFile('styles.css');
-$login = $css->getSelector('#login');
-echo $login['margin'];
-```
+[Top](#pop-css)

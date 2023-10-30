@@ -29,6 +29,11 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
 {
 
     /**
+     * Trait declaration
+     */
+    use CommentTrait;
+
+    /**
      * Selectors
      * @var array
      */
@@ -51,12 +56,6 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
      * @var array
      */
     protected array $classes = [];
-
-    /**
-     * Comments
-     * @var array
-     */
-    protected array $comments = [];
 
     /**
      * Minify flag
@@ -141,28 +140,6 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
         }
 
         return $this;
-    }
-
-    /**
-     * Add CSS comment
-     *
-     * @param  Comment $comment
-     * @return AbstractCss
-     */
-    public function addComment(Comment $comment): AbstractCss
-    {
-        $this->comments[] = $comment;
-        return $this;
-    }
-
-    /**
-     * Get CSS comments
-     *
-     * @return array
-     */
-    public function getComments(): array
-    {
-        return $this->comments;
     }
 
     /**

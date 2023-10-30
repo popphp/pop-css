@@ -33,15 +33,31 @@ class Comment
     protected ?string $comment = null;
 
     /**
+     * Comment wrap
+     * @var int
+     */
+    protected int $wrap = 80;
+
+    /**
+     * Trailing new line
+     * @var bool
+     */
+    protected bool $trailingNewLine = true;
+
+    /**
      * Constructor
      *
      * Instantiate the CSS comment object
      *
      * @param string $comment
+     * @param int    $wrap
+     * @param bool   $trailingNewLine
      */
-    public function __construct(string $comment)
+    public function __construct(string $comment, int $wrap = 80, bool $trailingNewLine = true)
     {
         $this->setComment($comment);
+        $this->setWrap($wrap);
+        $this->setTrailingNewLine($trailingNewLine);
     }
 
     /**
@@ -67,26 +83,79 @@ class Comment
     }
 
     /**
+     * Set wrap
+     *
+     * @param  int $wrap
+     * @return Comment
+     */
+    public function setWrap(int $wrap): Comment
+    {
+        $this->wrap = $wrap;
+        return $this;
+    }
+
+    /**
+     * Get wrap
+     *
+     * @return int
+     */
+    public function getWrap(): int
+    {
+        return $this->wrap;
+    }
+
+    /**
+     * Set trailing new line
+     *
+     * @param  bool $trailingNewLine
+     * @return Comment
+     */
+    public function setTrailingNewLine(bool $trailingNewLine): Comment
+    {
+        $this->trailingNewLine = $trailingNewLine;
+        return $this;
+    }
+
+    /**
+     * Has trailing new line
+     *
+     * @return bool
+     */
+    public function hasTrailingNewLine(): bool
+    {
+        return $this->trailingNewLine;
+    }
+
+    /**
      * Method to render the selector CSS
      *
      * @return string
      */
     public function render(): string
     {
-        $comment = '/**' . PHP_EOL;
+        $comment = '/*';
 
-        if (str_contains($this->comment, PHP_EOL)) {
-            $commentAry = explode(PHP_EOL, $this->comment);
+        if ($this->wrap == 0) {
+            $comment .= ' ' . $this->comment;
         } else {
-            $commentAry = (strlen($this->comment) > 80) ?
-                explode(PHP_EOL, wordwrap($this->comment, 80, PHP_EOL)) : [$this->comment];
+            $comment .= PHP_EOL;
+            if (str_contains($this->comment, PHP_EOL)) {
+                $commentAry = explode(PHP_EOL, $this->comment);
+            } else {
+                $commentAry = (strlen($this->comment) > $this->wrap) ?
+                    explode(PHP_EOL, wordwrap($this->comment, $this->wrap, PHP_EOL)) : [$this->comment];
+            }
+
+            foreach ($commentAry as $line) {
+                $comment .= ' * ' . $line . PHP_EOL;
+            }
         }
 
-        foreach ($commentAry as $line) {
-            $comment .= ' * ' . $line . PHP_EOL;
-        }
+        $comment .= ' */';
 
-        $comment .= ' */' . PHP_EOL;
+        if ($this->trailingNewLine) {
+            $comment .= PHP_EOL;
+        }
 
         return $comment;
     }

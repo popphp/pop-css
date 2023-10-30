@@ -73,8 +73,23 @@ class CssTest extends TestCase
         $comment = new Css\Comment('Test comment');
         $css = new Css\Css();
         $css->addComment($comment);
+        $this->assertTrue($css->hasComments());
         $this->assertEquals(1, count($css->getComments()));
         $this->assertEquals('Test comment', $comment->getComment());
+        $this->assertTrue($comment->hasTrailingNewLine());
+        $this->assertEquals(80, $comment->getWrap());
+    }
+
+    public function testAddSingleLineComment()
+    {
+        $comment = new Css\Comment('Test comment', 0, false);
+        $css = new Css\Css();
+        $css->addComment($comment);
+        $this->assertTrue($css->hasComments());
+        $this->assertEquals(1, count($css->getComments()));
+        $this->assertEquals('/* Test comment */', (string)$comment);
+        $this->assertFalse($comment->hasTrailingNewLine());
+        $this->assertEquals(0, $comment->getWrap());
     }
 
     public function testMinify()

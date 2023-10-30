@@ -29,6 +29,11 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
 {
 
     /**
+     * Trait declaration
+     */
+    use CommentTrait;
+
+    /**
      * Selector name
      * @var ?string
      */
@@ -57,12 +62,6 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * @var bool
      */
     protected bool $isClass = false;
-
-    /**
-     * Comments
-     * @var array
-     */
-    protected array $comments = [];
 
     /**
      * Minify flag
@@ -257,28 +256,6 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
             unset($this->properties[$property]);
         }
         return $this;
-    }
-
-    /**
-     * Add CSS comment
-     *
-     * @param  Comment $comment
-     * @return Selector
-     */
-    public function addComment(Comment $comment): Selector
-    {
-        $this->comments[] = $comment;
-        return $this;
-    }
-
-    /**
-     * Get CSS comments
-     *
-     * @return array
-     */
-    public function getComments(): array
-    {
-        return $this->comments;
     }
 
     /**
