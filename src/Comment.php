@@ -53,7 +53,7 @@ class Comment
      * @param int    $wrap
      * @param bool   $trailingNewLine
      */
-    public function __construct(string $comment, int $wrap = 80, bool $trailingNewLine = true)
+    public function __construct(string $comment, int $wrap = 80, bool $trailingNewLine = false)
     {
         $this->setComment($comment);
         $this->setWrap($wrap);

@@ -35,11 +35,16 @@ trait CommentTrait
     /**
      * Add CSS comment
      *
-     * @param  Comment $comment
+     * @param  Comment|string $comment
+     * @param  int            $wrap
+     * @param  bool           $trailingNewLine
      * @return static
      */
-    public function addComment(Comment $comment): static
+    public function addComment(Comment|string $comment, int $wrap = 80, bool $trailingNewLine = false): static
     {
+        if (is_string($comment)) {
+            $comment = new Comment($comment, $wrap, $trailingNewLine);
+        }
         $this->comments[] = $comment;
         return $this;
     }

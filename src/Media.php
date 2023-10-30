@@ -302,7 +302,13 @@ class Media extends AbstractCss
             }
         }
 
+        // Clean up end new lines
+        if (str_ends_with($css, PHP_EOL . str_repeat(' ', $this->tabSize) . PHP_EOL)) {
+            $css = substr($css, 0, 0 - ($this->tabSize + 1));
+        }
+
         $css .= '}';
+
         if (!$this->minify) {
             $css .= PHP_EOL;
         }

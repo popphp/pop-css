@@ -10,7 +10,16 @@ class CssTest extends TestCase
 
     public function testConstructor()
     {
-        $css = new Css\Css();
+        $html     = new Css\Selector('html');
+        $comment  = 'This is a comment';
+        $media    = new Css\Media();
+        $elements = [
+            new Css\Selector('#login'),
+            new Css\Selector('.login-div'),
+            new Css\Media(),
+            'This is a comment'
+        ];
+        $css = new Css\Css($html, $comment, $media, $elements);
         $this->assertInstanceOf('Pop\Css\Css', $css);
     }
 
@@ -70,12 +79,13 @@ class CssTest extends TestCase
 
     public function testAddComment()
     {
-        $comment = new Css\Comment('Test comment');
+        $comment = new Css\Comment('Test comment', 80, true);
         $css = new Css\Css();
         $css->addComment($comment);
         $this->assertTrue($css->hasComments());
         $this->assertEquals(1, count($css->getComments()));
         $this->assertEquals('Test comment', $comment->getComment());
+        $this->assertTrue(str_contains($comment->render(), 'Test comment'));
         $this->assertTrue($comment->hasTrailingNewLine());
         $this->assertEquals(80, $comment->getWrap());
     }
@@ -172,6 +182,21 @@ class CssTest extends TestCase
         $css->addSelector($id);
         $cssString = (string)$css;
         $this->assertStringContainsString('html {', $cssString);
+    }
+
+    public function testWriteToFile()
+    {
+        $id = new Css\Selector('#id');
+        $id->setProperties([
+            'margin'  => 0,
+            'padding' => 0
+        ]);
+        $this->assertFileDoesNotExist(__DIR__ . '/tmp/test.css');
+        $css = Css\Css::parseFile(__DIR__ . '/tmp/styles.css');
+        $css->addSelector($id);
+        $css->writeToFile(__DIR__ . '/tmp/test.css');
+        $this->assertFileExists(__DIR__ . '/tmp/test.css');
+        unlink(__DIR__ . '/tmp/test.css');
     }
 
     public function testOffsetMethods()

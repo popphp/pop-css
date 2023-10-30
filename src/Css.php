@@ -33,6 +33,40 @@ class Css extends AbstractCss
     protected array $media = [];
 
     /**
+     * CSS object constructor
+     *
+     */
+    public function __construct()
+    {
+        $args = func_get_args();
+
+        foreach ($args as $arg) {
+            $this->loadArgument($arg);
+        }
+    }
+
+    /**
+     * Load argument
+     *
+     * @param  mixed $arg
+     * @return void
+     */
+    protected function loadArgument(mixed $arg): void
+    {
+        if ($arg instanceof Selector) {
+            $this->addSelector($arg);
+        } else if (($arg instanceof Comment) || is_string($arg)) {
+            $this->addComment($arg);
+        } else if ($arg instanceof Media) {
+            $this->addMedia($arg);
+        } else if (is_array($arg)) {
+            foreach ($arg as $a) {
+                $this->loadArgument($a);
+            }
+        }
+    }
+
+    /**
      * Add media query
      *
      * @param  Media $media
@@ -315,6 +349,17 @@ class Css extends AbstractCss
     public function parseCssUri(string $cssUri): Css
     {
         return $this->parseCss(file_get_contents($cssUri));
+    }
+
+    /**
+     * Method to write CSS to file
+     *
+     * @param  string $filename
+     * @return void
+     */
+    public function writeToFile(string $filename): void
+    {
+        file_put_contents($filename, $this->render());
     }
 
     /**

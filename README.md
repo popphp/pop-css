@@ -13,6 +13,7 @@ pop-css
 * [Selectors](#selectors)
 * [Media Queries](#media-queries)
 * [Comments](#comments)
+* [Minify](#minify)
 
 Overview
 --------
@@ -44,8 +45,6 @@ Quickstart
 
 In creating CSS, you will use the main CSS object and create and add selector, media and comment objects
 to it to build your CSS.
-
-**Adding some selectors**
 
 ```php
 use Pop\Css\Css;
@@ -86,19 +85,317 @@ html {
 }
 ```
 
+Rendering the CSS can happen a number of ways:
+
+**Call the render method**
+
+```php
+$cssString = $css->render();
+```
+
+**Call a string function**
+
+```php
+echo $css;
+```
+
+**Write to file**
+
+```php
+$css->writeToFile(__DIR__ . '/styles.css');
+```
+
 [Top](#pop-css)
 
 Selectors
 ---------
+
+The selector object is the main object in which to define the various selectors and add them to the
+main CSS object. The selector constructor accepts any valid CSS selector.
+
+```php
+use Pop\Css\Css;
+use Pop\Css\Selector;
+
+$css = new Css();
+
+// Element selector
+$html = new Selector('p');
+$html->setProperties([
+    'margin'      => 0,
+    'padding'     => '3px',
+    'color'       => '#555',
+    'font-family' => 'Arial, sans-serif'
+]);
+
+// ID selector
+$login = new Selector('#login');
+$login->setProperty('margin', 0)
+    ->setProperty('padding', 0);
+
+// Class selector
+$bold = new Selector('.bold');
+$bold->setProperty('font-weight', 'bold');
+
+$css->addSelectors([$html, $login, $bold]);
+
+echo $css;
+```
+
+The above code will produce:
+
+```css
+p {
+    margin: 0;
+    padding: 3px;
+    color: #555;
+    font-family: Arial, sans-serif;
+}
+
+#login {
+    margin: 0;
+    padding: 0;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+```
 
 [Top](#pop-css)
 
 Media Queries
 -------------
 
+Media queries can be created as separate objects that contain their own selector objects.
+They are then added to the main CSS object.
+
+```php
+use Pop\Css\Css;
+use Pop\Css\Selector;
+use Pop\Css\Media;
+
+$css = new Css();
+
+$html = new Selector('html');
+$html->setProperties([
+    'margin'  => 0,
+    'padding' => 0,
+    'background-color' => '#fff',
+    'font-family' => 'Arial, sans-serif'
+]);
+
+$login = new Selector('#login');
+$login->setProperty('margin', 0);
+$login->setProperty('padding', 0);
+$login->setProperty('width', '50%');
+
+$p = new Selector('p');
+$p->setProperty('margin', 0);
+$p->setProperty('padding', 0);
+$p->setProperty('width', '50%');
+
+$media = new Media('screen');
+$media->setFeature('max-width', '480px');
+$media['#login'] = new Selector();
+$media['#login']->setProperty('width', '75%');
+$media['p'] = new Selector();
+$media['p']->setProperty('width', '75%');
+
+$css->addSelectors([$html, $login, $p])
+    ->addMedia($media);
+
+echo $css;
+```
+
+The above code will produce:
+
+```css
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+    width: 50%;
+}
+
+#login {
+    margin: 0;
+    padding: 0;
+    width: 50%;
+}
+
+@media screen and (max-width: 480px) {
+    p {
+        width: 75%;
+    }
+    
+    #login {
+        width: 75%;
+    }
+}
+```
+
 [Top](#pop-css)
 
 Comments
 --------
 
+Comments can be added in a number of places. They can be added to the top of the main CSS content,
+to the top of a selector or to the top of a media query.
+
+```php
+use Pop\Css\Css;
+use Pop\Css\Selector;
+use Pop\Css\Media;
+use Pop\Css\Comment;
+
+$css = new Css();
+$css->addComment('This is a global comment');
+
+$html = new Selector('html');
+$html->setProperties([
+    'margin'  => 0,
+    'padding' => 0,
+    'background-color' => '#fff',
+    'font-family' => 'Arial, sans-serif'
+]);
+
+$p = new Selector('p');
+$p->setProperty('margin', 0);
+$p->setProperty('padding', 0);
+$p->setProperty('width', '50%');
+$p->addComment('This is a comment for the P selector');
+
+$media = new Media('screen');
+$media->setFeature('max-width', '480px');
+$media['html'] = new Selector();
+$media['html']->setProperty('padding', '1%');
+$media['html']->addComment('This is a comment for the HTML selector in the media query');
+$media->addComment('This is a comment for the media query');
+
+$css->addSelectors([$html, $p])
+    ->addMedia($media);
+
+echo $css;
+```
+
+The above code will produce:
+
+```css
+/*
+ * This is a global comment
+ */
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+/*
+ * This is a comment for the P selector
+ */
+p {
+    margin: 0;
+    padding: 0;
+    width: 50%;
+}
+
+/*
+ * This is a comment for the media query
+ */
+@media screen and (max-width: 480px) {
+    /*
+     * This is a comment for the HTML selector in the media query
+     */
+    html {
+        padding: 1%;
+    }
+}
+```
+
+Comments can be tailored the `$wrap` and `$trailingNewLine` properties that can be passed into
+the comment constructor. If the `$wrap` is set to `0`, it will force a single-line comment.
+
+```php
+use Pop\Css\Css;
+use Pop\Css\Selector;
+
+$p = new Selector('p');
+$p->setProperty('margin', 0);
+$p->setProperty('padding', 0);
+$p->setProperty('width', '50%');
+$p->addComment('This is a comment for the P selector', 0, false);
+
+$css = new Css($p);
+echo $css;
+```
+
+
+The above code will produce:
+
+```css
+/* This is a comment for the P selector */
+p {
+    margin: 0;
+    padding: 0;
+    width: 50%;
+}
+```
+
 [Top](#pop-css)
+
+Minify
+------
+
+Setting the minify property on the main CSS object will perform a basic minification of the CSS content.
+
+```php
+use Pop\Css\Css;
+use Pop\Css\Selector;
+use Pop\Css\Media;
+
+$css = new Css();
+$css->addComment('This is a global comment');
+
+$html = new Selector('html');
+$html->setProperties([
+    'margin'  => 0,
+    'padding' => 0,
+    'background-color' => '#fff',
+    'font-family' => 'Arial, sans-serif'
+]);
+
+$p = new Selector('p');
+$p->setProperty('margin', 0);
+$p->setProperty('padding', 0);
+$p->setProperty('width', '50%');
+
+$media = new Media('screen');
+$media->setFeature('max-width', '480px');
+$media['html'] = new Selector();
+$media['html']->setProperty('padding', '1%');
+
+$css->addSelectors([$html, $p])
+    ->addMedia($media);
+
+$css->minify(true);
+
+echo $css;
+```
+
+The above code will produce:
+
+```css
+html{margin:0;padding:0;background-color:#fff;font-family:Arial, sans-serif;}p{margin:0;padding:0;width:50%;} @media screen and (max-width: 480px) {html{padding:1%;}}
+```
+
+[Top](#pop-css)
+
