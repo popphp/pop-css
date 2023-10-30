@@ -106,6 +106,27 @@ echo $css;
 $css->writeToFile(__DIR__ . '/styles.css');
 ```
 
+The main CSS object's constructor is also flexible and other CSS-related objects can be injected into it:
+
+```php
+use Pop\Css\Css;
+use Pop\Css\Selector;
+
+$html = new Selector('html');
+$html->setProperties([
+    'margin'           => 0,
+    'padding'          => 0,
+    'background-color' => '#fff',
+    'font-family'      => 'Arial, sans-serif'
+]);
+
+$login = new Selector('#login');
+$login->setProperty('margin', 0)
+    ->setProperty('padding', 0);
+
+$css = new Css($html, $login);
+```
+
 [Top](#pop-css)
 
 Selectors
