@@ -276,7 +276,6 @@ to the top of a selector or to the top of a media query.
 use Pop\Css\Css;
 use Pop\Css\Selector;
 use Pop\Css\Media;
-use Pop\Css\Comment;
 
 $css = new Css();
 $css->addComment('This is a global comment');
@@ -343,7 +342,7 @@ p {
 }
 ```
 
-Comments can be tailored the `$wrap` and `$trailingNewLine` properties that can be passed into
+Comments can be tailored with the `$wrap` and `$trailingNewLine` properties that can be passed into
 the comment constructor. If the `$wrap` is set to `0`, it will force a single-line comment.
 
 ```php
@@ -389,8 +388,8 @@ $css = Css::parseString($cssString);
 $css = Css::parseUri('http://www.domain.com/css/styles.css');
 ```
 
-In each case, it will return as CSS object populated with the related CSS objects from the content
-of the CSS source.
+In each case, it will return a CSS object populated with the related CSS objects from the content
+of the source.
 
 [Top](#pop-css)
 
