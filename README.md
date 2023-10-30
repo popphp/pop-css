@@ -13,6 +13,7 @@ pop-css
 * [Selectors](#selectors)
 * [Media Queries](#media-queries)
 * [Comments](#comments)
+* [Parse CSS](#parse-css)
 * [Minify](#minify)
 
 Overview
@@ -349,6 +350,26 @@ p {
     width: 50%;
 }
 ```
+
+[Top](#pop-css)
+
+Parse CSS
+---------
+
+You can parse CSS with the following methods:
+
+```php
+use Pop\Css\Css;
+
+$css = Css::parseFile('path/to/styles.css');
+
+$css = Css::parseString($cssString);
+
+$css = Css::parseUri('http://www.domain.com/css/styles.css');
+```
+
+In each case, it will return as CSS object populated with the related CSS objects from the content
+of the CSS source.
 
 [Top](#pop-css)
 
