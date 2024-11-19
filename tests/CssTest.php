@@ -134,7 +134,7 @@ class CssTest extends TestCase
 
     public function testParseUri()
     {
-        $css = Css\Css::parseUri('https://www.popphp.org/assets/css/freelancer.min.css');
+        $css = Css\Css::parseUri('https://www.popphp.org/assets/app.css');
         $this->assertTrue($css->hasSelector('body'));
     }
 
