@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": ">=8.2.0",
-        "popphp/pop-color": "^1.0.0"
+        "popphp/pop-color": "^1.0.1"
     },
     "autoload": {
         "psr-4": {

@@ -35,7 +35,7 @@ Install `pop-css` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-css" : "^2.0.0"
+        "popphp/pop-css" : "^2.0.1"
     }
 
 [Top](#pop-css)
