@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Css;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    2.0.3
+ * @version    3.0.0
  */
 class Media extends AbstractCss
 {
@@ -223,7 +223,7 @@ class Media extends AbstractCss
             $css .= ' ' . $this->type;
         }
 
-        if (!empty($this->condition) || !empty($this->type)) {
+        if ((!empty($this->condition) || !empty($this->type)) && (count($this->features) > 0)) {
             $css .= ' and';
         }
 
@@ -240,65 +240,21 @@ class Media extends AbstractCss
             $css .= PHP_EOL;
         }
 
-        foreach ($this->elements as $element) {
+        foreach ($this->selectors as $selector) {
+            $selector->minify($this->minify);
+            $selectorCss = (string)$selector;
 
-            if (isset($this->selectors[$element])) {
-                $selector = $this->selectors[$element];
-                $selector->minify($this->minify);
-                $elementCss = (string)$selector;
-
-                if (!$this->minify) {
-                    $elementCssAry = explode(PHP_EOL, $elementCss);
-                    foreach ($elementCssAry as $key => $value) {
-                        $elementCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
-                    }
-                    $elementCss = implode(PHP_EOL, $elementCssAry);
+            if (!$this->minify) {
+                $selectorCssAry = explode(PHP_EOL, $selectorCss);
+                foreach ($selectorCssAry as $key => $value) {
+                    $selectorCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
                 }
-
-                $css .= $elementCss;
-                if (!$this->minify) {
-                    $css .= PHP_EOL;
-                }
+                $selectorCss = implode(PHP_EOL, $selectorCssAry);
             }
-        }
-        foreach ($this->ids as $id) {
-            if (isset($this->selectors[$id])) {
-                $selector = $this->selectors[$id];
-                $selector->minify($this->minify);
-                $idCss = (string)$selector;
 
-                if (!$this->minify) {
-                    $idCssAry = explode(PHP_EOL, $idCss);
-                    foreach ($idCssAry as $key => $value) {
-                        $idCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
-                    }
-                    $idCss = implode(PHP_EOL, $idCssAry);
-                }
-
-                $css .= $idCss;
-                if (!$this->minify) {
-                    $css .= PHP_EOL;
-                }
-            }
-        }
-        foreach ($this->classes as $class) {
-            if (isset($this->selectors[$class])) {
-                $selector = $this->selectors[$class];
-                $selector->minify($this->minify);
-                $classCss = (string)$selector;
-
-                if (!$this->minify) {
-                    $classCssAry = explode(PHP_EOL, $classCss);
-                    foreach ($classCssAry as $key => $value) {
-                        $classCssAry[$key] = str_repeat(' ', $this->tabSize) . $value;
-                    }
-                    $classCss = implode(PHP_EOL, $classCssAry);
-                }
-
-                $css .= $classCss;
-                if (!$this->minify) {
-                    $css .= PHP_EOL;
-                }
+            $css .= $selectorCss;
+            if (!$this->minify) {
+                $css .= PHP_EOL;
             }
         }
 

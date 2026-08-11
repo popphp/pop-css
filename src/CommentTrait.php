@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Css;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    2.0.3
+ * @version    3.0.0
  */
 trait CommentTrait
 {
@@ -67,6 +67,32 @@ trait CommentTrait
     public function hasComments(): bool
     {
         return !empty($this->comments);
+    }
+
+    /**
+     * Remove CSS comment by index
+     *
+     * @param  int $i
+     * @return static
+     */
+    public function removeComment(int $i): static
+    {
+        if (isset($this->comments[$i])) {
+            unset($this->comments[$i]);
+            $this->comments = array_values($this->comments);
+        }
+        return $this;
+    }
+
+    /**
+     * Remove all CSS comments
+     *
+     * @return static
+     */
+    public function removeAllComments(): static
+    {
+        $this->comments = [];
+        return $this;
     }
 
 }

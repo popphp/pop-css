@@ -3,6 +3,7 @@
 namespace Pop\Css\Test;
 
 use Pop\Css;
+use Pop\Color\Color;
 use PHPUnit\Framework\TestCase;
 
 class CssTest extends TestCase
@@ -102,6 +103,33 @@ class CssTest extends TestCase
         $this->assertEquals(0, $comment->getWrap());
     }
 
+    public function testRemoveComment()
+    {
+        $css = new Css\Css();
+        $css->addComment('First comment');
+        $css->addComment('Second comment');
+        $this->assertEquals(2, count($css->getComments()));
+
+        $css->removeComment(0);
+
+        $comments = $css->getComments();
+        $this->assertEquals(1, count($comments));
+        $this->assertTrue(isset($comments[0]));
+        $this->assertEquals('Second comment', $comments[0]->getComment());
+    }
+
+    public function testRemoveAllComments()
+    {
+        $css = new Css\Css();
+        $css->addComment('First comment');
+        $css->addComment('Second comment');
+
+        $css->removeAllComments();
+
+        $this->assertEquals(0, count($css->getComments()));
+        $this->assertFalse($css->hasComments());
+    }
+
     public function testMinify()
     {
         $css = new Css\Css();
@@ -118,6 +146,27 @@ class CssTest extends TestCase
         $css->removeMedia(0);
         $css->removeAllMedia();
         $this->assertEquals(0, count($css->getAllMedia()));
+    }
+
+    public function testRemoveMediaReindexesRemainingMedia()
+    {
+        $first  = new Css\Media('screen');
+        $second = new Css\Media('print');
+        $third  = new Css\Media('speech');
+
+        $css = new Css\Css();
+        $css->addMedia($first)
+            ->addMedia($second)
+            ->addMedia($third);
+
+        $css->removeMedia(0);
+
+        $remaining = $css->getAllMedia();
+        $this->assertEquals(2, count($remaining));
+        $this->assertTrue(isset($remaining[0]));
+        $this->assertTrue(isset($remaining[1]));
+        $this->assertSame($second, $remaining[0]);
+        $this->assertSame($third, $remaining[1]);
     }
 
     public function testParseString()
@@ -220,6 +269,165 @@ class CssTest extends TestCase
         $this->expectException('Pop\Css\Exception');
         $css = new Css\Css();
         $css['.login-div'] = [123];
+    }
+
+    public function testRenderPreservesInsertionOrder()
+    {
+        $css = new Css\Css();
+        $css->addSelectors([
+            new Css\Selector('.bold'),
+            new Css\Selector('html'),
+            new Css\Selector('#login'),
+        ]);
+
+        $cssString = (string)$css;
+
+        $boldPos  = strpos($cssString, '.bold');
+        $htmlPos  = strpos($cssString, 'html');
+        $loginPos = strpos($cssString, '#login');
+
+        $this->assertLessThan($htmlPos, $boldPos);
+        $this->assertLessThan($loginPos, $htmlPos);
+    }
+
+    public function testParsedSelectorColorPropertyIsReadableAsColorObject()
+    {
+        $css = Css\Css::parseString(".box {\n    color: #ff0000;\n    width: 50%;\n}\n");
+        $selector = $css->getSelector('.box');
+
+        $color = $selector->getColorProperty('color');
+        $this->assertInstanceOf(Color\ColorInterface::class, $color);
+        $this->assertEquals('#ff0000', $color->toCss());
+        $this->assertNull($selector->getColorProperty('width'));
+    }
+
+    public function testParseSelectorsHandlesSemicolonAndColonInsideUrlValue()
+    {
+        $css      = Css\Css::parseString(".icon {\n    background: url(data:image/png;base64,iVBORw0KGgo=);\n    color: #fff;\n}\n");
+        $selector = $css->getSelector('.icon');
+
+        $this->assertEquals('url(data:image/png;base64,iVBORw0KGgo=)', $selector->getProperty('background'));
+        $this->assertEquals('#fff', $selector->getProperty('color'));
+    }
+
+    public function testParseSelectorsHandlesUnmatchedClosingParenInValue()
+    {
+        $css      = Css\Css::parseString(".x {\n    content: \")\";\n    color: red;\n}\n");
+        $selector = $css->getSelector('.x');
+
+        $this->assertEquals('")"', $selector->getProperty('content'));
+        $this->assertEquals('red', $selector->getProperty('color'));
+    }
+
+    public function testHasSelectorReturnsFalseForUnknownSelector()
+    {
+        $css = new Css\Css();
+        $this->assertFalse($css->hasSelector('.does-not-exist'));
+    }
+
+    public function testGetSelectorReturnsNullForUnknownSelector()
+    {
+        $css = new Css\Css();
+        $this->assertNull($css->getSelector('.does-not-exist'));
+    }
+
+    public function testCountWithNoSelectors()
+    {
+        $css = new Css\Css();
+        $this->assertEquals(0, count($css));
+    }
+
+    public function testIteratorWithNoSelectors()
+    {
+        $css = new Css\Css();
+        $i = 0;
+        foreach ($css as $selector) {
+            $i++;
+        }
+        $this->assertEquals(0, $i);
+    }
+
+    public function testParsedSelectorsRenderInSourceOrder()
+    {
+        $css       = Css\Css::parseFile(__DIR__ . '/tmp/styles.css');
+        $cssString = (string)$css;
+
+        $htmlPos = strpos($cssString, 'html {');
+        $bodyPos = strpos($cssString, 'body {');
+        $aPos    = strpos($cssString, 'a {');
+        $loginPos = strpos($cssString, '.login {');
+
+        $this->assertLessThan($bodyPos, $htmlPos);
+        $this->assertLessThan($aPos, $bodyPos);
+        $this->assertLessThan($loginPos, $aPos);
+    }
+
+    public function testParseMediaTypeAll()
+    {
+        $css = Css\Css::parseString("@media all {\n    p {\n        color: red;\n    }\n}\n");
+        $this->assertEquals('all', $css->getMedia(0)->getType());
+    }
+
+    public function testParseMediaTypePrint()
+    {
+        $css = Css\Css::parseString("@media print {\n    p {\n        color: red;\n    }\n}\n");
+        $this->assertEquals('print', $css->getMedia(0)->getType());
+    }
+
+    public function testParseMediaTypeSpeech()
+    {
+        $css = Css\Css::parseString("@media speech {\n    p {\n        color: red;\n    }\n}\n");
+        $this->assertEquals('speech', $css->getMedia(0)->getType());
+    }
+
+    public function testParseMediaConditionNot()
+    {
+        $css   = Css\Css::parseString("@media not screen {\n    p {\n        color: red;\n    }\n}\n");
+        $media = $css->getMedia(0);
+        $this->assertEquals('not', $media->getCondition());
+        $this->assertEquals('screen', $media->getType());
+    }
+
+    public function testParseMediaConditionOnly()
+    {
+        $css   = Css\Css::parseString("@media only screen {\n    p {\n        color: red;\n    }\n}\n");
+        $media = $css->getMedia(0);
+        $this->assertEquals('only', $media->getCondition());
+        $this->assertEquals('screen', $media->getType());
+    }
+
+    public function testParseMediaWithNoPrecedingComment()
+    {
+        $css   = Css\Css::parseString("p {\n    color: blue;\n}\n@media screen {\n    a {\n        color: red;\n    }\n}\n");
+        $media = $css->getMedia(0);
+        $this->assertFalse($media->hasComments());
+    }
+
+    public function testMinifyPropagatesToMediaAndSelectors()
+    {
+        $html = new Css\Selector('html');
+        $html->setProperty('margin', 0);
+
+        $p = new Css\Selector('p');
+        $p->setProperty('color', 'red');
+
+        $media = new Css\Media('screen', ['max-width' => '480px']);
+        $media->addSelector($p);
+
+        $css = new Css\Css();
+        $css->addSelector($html)
+            ->addMedia($media);
+        $css->minify(true);
+
+        $expected = 'html{margin:0;} @media screen and (max-width: 480px) {p{color:red;}}';
+        $this->assertEquals($expected, (string)$css);
+    }
+
+    public function testConstructorAcceptsCommentObject()
+    {
+        $comment = new Css\Comment('This is a comment');
+        $css     = new Css\Css($comment);
+        $this->assertTrue($css->hasComments());
     }
 
 }

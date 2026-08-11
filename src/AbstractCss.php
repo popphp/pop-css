@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use ArrayIterator;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    2.0.3
+ * @version    3.0.0
  */
 abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -40,24 +40,6 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
     protected array $selectors = [];
 
     /**
-     * Elements
-     * @var array
-     */
-    protected array $elements = [];
-
-    /**
-     * IDs
-     * @var array
-     */
-    protected array $ids = [];
-
-    /**
-     * Classes
-     * @var array
-     */
-    protected array $classes = [];
-
-    /**
      * Minify flag
      * @var bool
      */
@@ -72,15 +54,6 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
     public function addSelector(Selector $selector): AbstractCss
     {
         $this->selectors[$selector->getName()] = $selector;
-
-        if ($selector->isElementSelector()) {
-            $this->elements[] = $selector->getName();
-        } else if ($selector->isIdSelector()) {
-            $this->ids[] = $selector->getName();
-        } else if ($selector->isClassSelector()) {
-            $this->classes[] = $selector->getName();
-        }
-
         return $this;
     }
 
@@ -121,24 +94,14 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
     }
 
     /**
-     * Get CSS selector
+     * Remove CSS selector
      *
      * @param  string $selector
      * @return AbstractCss
      */
     public function removeSelector(string $selector): AbstractCss
     {
-        if (isset($this->selectors[$selector])) {
-            unset($this->selectors[$selector]);
-            if (in_array($selector, $this->elements)) {
-                unset($this->elements[array_search($selector, $this->elements)]);
-            } else if (in_array($selector, $this->ids)) {
-                unset($this->ids[array_search($selector, $this->ids)]);
-            } else if (in_array($selector, $this->classes)) {
-                unset($this->classes[array_search($selector, $this->classes)]);
-            }
-        }
-
+        unset($this->selectors[$selector]);
         return $this;
     }
 

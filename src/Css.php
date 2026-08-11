@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Css;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    2.0.3
+ * @version    3.0.0
  */
 class Css extends AbstractCss
 {
@@ -107,8 +107,9 @@ class Css extends AbstractCss
      */
     public function removeMedia(int $i): Css
     {
-        if (isset($this->media[(int)$i])) {
-            unset($this->media[(int)$i]);
+        if (isset($this->media[$i])) {
+            unset($this->media[$i]);
+            $this->media = array_values($this->media);
         }
         return $this;
     }
@@ -376,34 +377,11 @@ class Css extends AbstractCss
                 $css .= (string)$comment . PHP_EOL;
             }
         }
-        foreach ($this->elements as $element) {
-            if (isset($this->selectors[$element])) {
-                $selector = $this->selectors[$element];
-                $selector->minify($this->minify);
-                $css .= (string)$selector;
-                if (!$this->minify) {
-                    $css .= PHP_EOL;
-                }
-            }
-        }
-        foreach ($this->ids as $id) {
-            if (isset($this->selectors[$id])) {
-                $selector = $this->selectors[$id];
-                $selector->minify($this->minify);
-                $css .= (string)$selector;
-                if (!$this->minify) {
-                    $css .= PHP_EOL;
-                }
-            }
-        }
-        foreach ($this->classes as $class) {
-            if (isset($this->selectors[$class])) {
-                $selector = $this->selectors[$class];
-                $selector->minify($this->minify);
-                $css .= (string)$selector;
-                if (!$this->minify) {
-                    $css .= PHP_EOL;
-                }
+        foreach ($this->selectors as $selector) {
+            $selector->minify($this->minify);
+            $css .= (string)$selector;
+            if (!$this->minify) {
+                $css .= PHP_EOL;
             }
         }
         foreach ($this->media as $media) {
@@ -447,12 +425,12 @@ class Css extends AbstractCss
                 if (strpos($selectorName, '{') !== false) {
                     $selectorName = trim(substr($selectorName, 0, strpos($selectorName, '{')));
                 }
-                $rules    = explode(';', trim(str_replace(['{', '}'], ['', ''], trim($match[0]))));
+                $rules    = $this->splitDeclarations(trim(str_replace(['{', '}'], ['', ''], trim($match[0]))));
                 $cssRules = [];
                 foreach ($rules as $key => $value) {
                     if (!empty($value)) {
                         $value = trim($value);
-                        $v = explode(':', $value);
+                        $v = explode(':', $value, 2);
                         if (count($v) == 2) {
                             $cssRules[trim($v[0])] = trim($v[1]);
                         }
@@ -467,6 +445,39 @@ class Css extends AbstractCss
         }
 
         return $selectors;
+    }
+
+    /**
+     * Split a rule block into individual declarations, respecting parentheses so a semicolon
+     * inside a value like url(data:image/png;base64,...) doesn't split one declaration into two
+     *
+     * @param  string $rulesBlock
+     * @return array
+     */
+    protected function splitDeclarations(string $rulesBlock): array
+    {
+        $declarations = [];
+        $current      = '';
+        $depth        = 0;
+
+        foreach (str_split($rulesBlock) as $char) {
+            if ($char === '(') {
+                $depth++;
+            } else if (($char === ')') && ($depth > 0)) {
+                $depth--;
+            }
+
+            if (($char === ';') && ($depth === 0)) {
+                $declarations[] = $current;
+                $current        = '';
+            } else {
+                $current .= $char;
+            }
+        }
+
+        $declarations[] = $current;
+
+        return $declarations;
     }
 
 }

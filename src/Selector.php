@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -14,6 +14,8 @@
 namespace Pop\Css;
 
 use ArrayIterator;
+use Pop\Color\Color;
+use Pop\Color\Color\ColorInterface;
 
 /**
  * Pop CSS selector class
@@ -21,9 +23,9 @@ use ArrayIterator;
  * @category   Pop
  * @package    Pop\Css
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    2.0.3
+ * @version    3.0.0
  */
 class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -188,13 +190,13 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Set property
      *
-     * @param  string $property
-     * @param  string $value
+     * @param  string                $property
+     * @param  string|ColorInterface $value
      * @return Selector
      */
-    public function setProperty(string $property, string $value): Selector
+    public function setProperty(string $property, string|ColorInterface $value): Selector
     {
-        $this->properties[$property] = $value;
+        $this->properties[$property] = ($value instanceof ColorInterface) ? $value->toCss() : $value;
         return $this;
     }
 
@@ -242,6 +244,25 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     public function getProperty(string $property): string|null
     {
         return $this->properties[$property] ?? null;
+    }
+
+    /**
+     * Get property as a color object
+     *
+     * @param  string $property
+     * @return ColorInterface|null
+     */
+    public function getColorProperty(string $property): ColorInterface|null
+    {
+        if (!isset($this->properties[$property])) {
+            return null;
+        }
+
+        try {
+            return Color::parse($this->properties[$property]);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**
@@ -349,12 +370,12 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      * Magic method to set the property to the value of $this->properties[$name]
      *
      * @param  string $name
-     * @param  mixed $value
+     * @param  mixed  $value
      * @return void
      */
     public function __set(string $name, mixed $value): void
     {
-        $this->properties[$name] = $value;
+        $this->properties[$name] = ($value instanceof ColorInterface) ? $value->toCss() : $value;
     }
 
     /**
@@ -420,7 +441,20 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __isset(string $name): bool
     {
-        return isset($this->properties[$name]);
+        if (isset($this->properties[$name])) {
+            return true;
+        }
+
+        foreach (['margin', 'padding'] as $shorthand) {
+            if (str_starts_with($name, $shorthand . '-') && isset($this->properties[$shorthand])) {
+                $position = substr($name, strlen($shorthand) + 1);
+                if (in_array($position, ['top', 'right', 'bottom', 'left'], true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
