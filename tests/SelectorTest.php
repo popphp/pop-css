@@ -134,6 +134,15 @@ class SelectorTest extends TestCase
         $this->assertStringContainsString('div{', $css);
     }
 
+    public function testSetPropertyAcceptsIntAndFloatAndStoresAsString()
+    {
+        $selector = new Css\Selector('.box');
+        $selector->setProperty('margin', 0);
+        $selector->setProperty('opacity', 0.5);
+        $this->assertSame('0', $selector->getProperty('margin'));
+        $this->assertSame('0.5', $selector->getProperty('opacity'));
+    }
+
     public function testSetPropertyAcceptsColorInterface()
     {
         $selector = new Css\Selector('.box');

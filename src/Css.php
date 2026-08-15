@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -183,7 +184,7 @@ class Css extends AbstractCss
         $matches       = [];
         preg_match_all('~@media\b[^{]*({((?:[^{}]+|(?1))*)})~', $cssString, $matches, PREG_OFFSET_CAPTURE);
 
-        if (isset($matches[0]) && isset($matches[0][0])) {
+        if (isset($matches[0][0])) {
             foreach ($matches[0] as $match) {
                 // See if media query has a top-level comment
                 $mediaComment = null;
@@ -195,7 +196,7 @@ class Css extends AbstractCss
                 }
                 if ($char == '/') {
                     $mediaComment = substr($origCssString, 0, ($pos + 1));
-                    $mediaComment = substr($mediaComment, strrpos($mediaComment, '/*'));
+                    $mediaComment = substr($mediaComment, strrpos($mediaComment, '/*') ?: 0);
                     $mediaComment = explode(PHP_EOL, $mediaComment);
                     foreach ($mediaComment as $key => $line) {
                         $mediaComment[$key] = trim(str_replace(['/*', '*/', '*'], ['', '', ''], $line));
@@ -207,9 +208,9 @@ class Css extends AbstractCss
                 $mediaCondition = null;
                 $mediaFeatures  = [];
                 $mediaQuery     = substr($match[0], 6);
-                $mediaQuery     = trim(substr($mediaQuery, 0, strpos($mediaQuery, ' {')));
+                $mediaQuery     = trim(substr($mediaQuery, 0, strpos($mediaQuery, ' {') ?: 0));
                 $mediaQueryCss  = substr($match[0], (strpos($match[0], '{') + 1));
-                $mediaQueryCss  = trim(substr($mediaQueryCss, 0, strrpos($match[0], '}')));
+                $mediaQueryCss  = trim(substr($mediaQueryCss, 0, strrpos($match[0], '}') ?: 0));
 
                 if (str_contains($mediaQuery, 'all')) {
                     $mediaType = 'all';
@@ -229,7 +230,7 @@ class Css extends AbstractCss
                 }
 
                 if ((str_contains($mediaQuery, '(')) && (str_contains($mediaQuery, ')'))) {
-                    $features = substr($mediaQuery, strpos($mediaQuery, '('));
+                    $features = substr($mediaQuery, strpos($mediaQuery, '(') ?: 0);
                     $features = substr($features, 0, (strrpos($features, ')') + 1));
                     $features = explode('and', $features);
                     foreach ($features as $feature) {
@@ -248,10 +249,10 @@ class Css extends AbstractCss
                 $commentsMatches = [];
                 preg_match_all('!/\*.*?\*/!s', $mediaQueryCss, $commentsMatches, PREG_OFFSET_CAPTURE);
 
-                if (isset($commentsMatches[0]) && isset($commentsMatches[0][0])) {
+                if (isset($commentsMatches[0][0])) {
                     foreach ($commentsMatches[0] as $match) {
                         $selectorName = substr($mediaQueryCss, $match[1]);
-                        $selectorName = substr($selectorName, 0, strpos($selectorName, '{'));
+                        $selectorName = substr($selectorName, 0, strpos($selectorName, '{') ?: 0);
                         $selectorName = trim(substr($selectorName, (strpos($selectorName, '*/') + 2)));
                         $comment = explode(PHP_EOL, $match[0]);
                         foreach ($comment as $key => $line) {
@@ -286,12 +287,12 @@ class Css extends AbstractCss
         $matches  = [];
         preg_match_all('!/\*.*?\*/!s', $cssString, $matches, PREG_OFFSET_CAPTURE);
 
-        if (isset($matches[0]) && isset($matches[0][0])) {
+        if (isset($matches[0][0])) {
             foreach ($matches[0] as $match) {
                 $selectorName = null;
                 if ($match[1] != 0) {
                     $selectorName = substr($cssString, $match[1]);
-                    $selectorName = substr($selectorName, 0, strpos($selectorName, '{'));
+                    $selectorName = substr($selectorName, 0, strpos($selectorName, '{') ?: 0);
                     $selectorName = trim(substr($selectorName, (strpos($selectorName, '*/') + 2)));
                 }
                 $comment = explode(PHP_EOL, $match[0]);
@@ -418,7 +419,7 @@ class Css extends AbstractCss
         $matches = [];
         preg_match_all('/\{\s*([^}]*?)\s*}/m', $cssString, $matches, PREG_OFFSET_CAPTURE);
 
-        if (isset($matches[0]) && isset($matches[0][0])) {
+        if (isset($matches[0][0])) {
             $curPos = 0;
             foreach ($matches[0] as $match) {
                 $selectorName = trim(substr($cssString, $curPos, $match[1]));

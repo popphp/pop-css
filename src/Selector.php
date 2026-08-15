@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -190,13 +191,13 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Set property
      *
-     * @param  string                $property
-     * @param  string|ColorInterface $value
+     * @param  string                          $property
+     * @param  string|int|float|ColorInterface $value
      * @return Selector
      */
-    public function setProperty(string $property, string|ColorInterface $value): Selector
+    public function setProperty(string $property, string|int|float|ColorInterface $value): Selector
     {
-        $this->properties[$property] = ($value instanceof ColorInterface) ? $value->toCss() : $value;
+        $this->properties[$property] = ($value instanceof ColorInterface) ? $value->render('CSS') : (string)$value;
         return $this;
     }
 
@@ -375,7 +376,7 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __set(string $name, mixed $value): void
     {
-        $this->properties[$name] = ($value instanceof ColorInterface) ? $value->toCss() : $value;
+        $this->properties[$name] = ($value instanceof ColorInterface) ? $value->render('CSS') : (string)$value;
     }
 
     /**

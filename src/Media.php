@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -60,7 +61,7 @@ class Media extends AbstractCss
      * @param ?string $condition
      * @param int     $tabSize
      */
-    public function __construct(?string $type = null, ?array $features = null, ?string $condition = null, $tabSize = 4)
+    public function __construct(?string $type = null, ?array $features = null, ?string $condition = null, int $tabSize = 4)
     {
         if ($type !== null) {
             $this->setType($type);

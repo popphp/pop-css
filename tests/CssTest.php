@@ -319,6 +319,17 @@ class CssTest extends TestCase
         $this->assertEquals('red', $selector->getProperty('color'));
     }
 
+    public function testParseHandlesCommentPrecedingFinalMediaBlockWithNoTrailingContent()
+    {
+        $css = Css\Css::parseString(
+            "p {\n    color: blue;\n}\n/**\n * comment\n */\n@media screen {\n    a {\n        color: red;\n    }\n}"
+        );
+
+        $media = $css->getMedia(0);
+        $this->assertEquals('comment', $media->getComments()[0]->getComment());
+        $this->assertTrue($media->hasSelector('a'));
+    }
+
     public function testHasSelectorReturnsFalseForUnknownSelector()
     {
         $css = new Css\Css();
