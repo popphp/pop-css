@@ -263,6 +263,13 @@ class SelectorTest extends TestCase
         $this->assertFalse(isset($selector['margin-top']));
     }
 
+    public function testGetReturnsNullForShorthandWithInvalidValueCount()
+    {
+        $selector = new Css\Selector('html');
+        $selector->setProperty('margin', '10px 5px 15px 20px 25px');
+        $this->assertNull($selector['margin-top']);
+    }
+
     public function testIsElementSelector()
     {
         $selector = new Css\Selector('div');

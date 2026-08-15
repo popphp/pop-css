@@ -387,51 +387,36 @@ class Selector implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __get(string $name): mixed
     {
-        if ((str_contains($name, 'margin-')) && !isset($this->properties[$name]) && isset($this->properties['margin'])) {
-            $values         = explode(' ', $this->properties['margin']);
-            $position       = substr($name, strpos($name, '-') + 1);
-            $positionValues = ['top' => null, 'right' => null, 'bottom' => null, 'left' => null];
-
-            switch (count($values)) {
-                case 4:
-                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[3]];
-                    break;
-                case 3:
-                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[1]];
-                    break;
-                case 2:
-                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[0], 'left' => $values[1]];
-                    break;
-                case 1:
-                    $positionValues = ['top' => $values[0], 'right' => $values[0], 'bottom' => $values[0], 'left' => $values[0]];
-                    break;
+        foreach (['margin', 'padding'] as $shorthand) {
+            if (str_contains($name, $shorthand . '-') && !isset($this->properties[$name]) && isset($this->properties[$shorthand])) {
+                return $this->resolveShorthandValue($shorthand, substr($name, strpos($name, '-') + 1));
             }
-
-            return $positionValues[$position];
-        } else if ((str_contains($name, 'padding-')) && !isset($this->properties[$name]) && isset($this->properties['padding'])) {
-            $values         = explode(' ', $this->properties['padding']);
-            $position       = substr($name, strpos($name, '-') + 1);
-            $positionValues = ['top' => null, 'right' => null, 'bottom' => null, 'left' => null];
-
-            switch (count($values)) {
-                case 4:
-                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[3]];
-                    break;
-                case 3:
-                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[1]];
-                    break;
-                case 2:
-                    $positionValues = ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[0], 'left' => $values[1]];
-                    break;
-                case 1:
-                    $positionValues = ['top' => $values[0], 'right' => $values[0], 'bottom' => $values[0], 'left' => $values[0]];
-                    break;
-            }
-
-            return $positionValues[$position];
-        } else {
-            return (isset($this->properties[$name])) ? $this->properties[$name] : null;
         }
+
+        return $this->properties[$name] ?? null;
+    }
+
+    /**
+     * Resolve a longhand value (e.g. margin-top) from a margin/padding shorthand property,
+     * per the 1/2/3/4-value CSS shorthand rules
+     *
+     * @param  string $shorthand
+     * @param  string $position
+     * @return string|null
+     */
+    protected function resolveShorthandValue(string $shorthand, string $position): string|null
+    {
+        $values = explode(' ', $this->properties[$shorthand]);
+
+        $positionValues = match (count($values)) {
+            4       => ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[3]],
+            3       => ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[2], 'left' => $values[1]],
+            2       => ['top' => $values[0], 'right' => $values[1], 'bottom' => $values[0], 'left' => $values[1]],
+            1       => ['top' => $values[0], 'right' => $values[0], 'bottom' => $values[0], 'left' => $values[0]],
+            default => ['top' => null, 'right' => null, 'bottom' => null, 'left' => null],
+        };
+
+        return $positionValues[$position] ?? null;
     }
 
     /**
