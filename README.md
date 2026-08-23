@@ -2,7 +2,7 @@ pop-css
 =======
 
 [![Build Status](https://github.com/popphp/pop-css/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-css/actions)
-[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-css)](http://cc.popphp.org/pop-css/)
+[![Coverage Status](https://cc.popphp.org/coverage.php?comp=pop-css)](https://cc.popphp.org/pop-css/)
 
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
