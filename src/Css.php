@@ -394,11 +394,17 @@ class Css extends AbstractCss
      * Parse CSS string from URI
      *
      * @param  string $cssUri
+     * @throws Exception
      * @return Css
      */
     public function parseCssUri(string $cssUri): Css
     {
-        return $this->parseCss(file_get_contents($cssUri));
+        $cssString = @file_get_contents($cssUri);
+        if ($cssString === false) {
+            throw new Exception("Error: Unable to fetch CSS from the URI '" . $cssUri . "'.");
+        }
+
+        return $this->parseCss($cssString);
     }
 
     /**

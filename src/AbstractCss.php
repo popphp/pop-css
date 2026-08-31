@@ -49,12 +49,23 @@ abstract class AbstractCss implements \ArrayAccess, \Countable, \IteratorAggrega
     /**
      * Add CSS selector
      *
+     * Merges into an existing same-name selector's properties (last value
+     * for a given property wins) rather than replacing it outright, matching
+     * real CSS cascade semantics for repeated rules on the same selector.
+     *
      * @param  Selector $selector
      * @return AbstractCss
      */
     public function addSelector(Selector $selector): AbstractCss
     {
-        $this->selectors[$selector->getName()] = $selector;
+        $name = $selector->getName();
+
+        if (isset($this->selectors[$name])) {
+            $this->selectors[$name]->setProperties($selector->getProperties());
+        } else {
+            $this->selectors[$name] = $selector;
+        }
+
         return $this;
     }
 

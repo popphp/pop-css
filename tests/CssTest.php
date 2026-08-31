@@ -42,6 +42,38 @@ class CssTest extends TestCase
         $this->assertInstanceOf('Pop\Css\Selector', $css->getSelector('.login-div'));
     }
 
+    public function testAddSelectorMergesIntoExistingSameNameSelector()
+    {
+        // Regression test: addSelector() used to replace the existing
+        // same-name selector wholesale, silently discarding any properties
+        // it held that the new selector doesn't also set - real CSS cascade
+        // semantics merge same-selector rules property-by-property instead.
+        $css = new Css\Css();
+
+        $original = new Css\Selector('h1');
+        $original->setProperty('font-size', '32px');
+        $original->setProperty('font-weight', 'bold');
+        $css->addSelector($original);
+
+        $colorOnly = new Css\Selector('h1');
+        $colorOnly->setProperty('color', '#cc0000');
+        $css->addSelector($colorOnly);
+
+        $merged = $css->getSelector('h1');
+        $this->assertEquals('32px', $merged->getProperty('font-size'));
+        $this->assertEquals('bold', $merged->getProperty('font-weight'));
+        $this->assertEquals('#cc0000', $merged->getProperty('color'));
+    }
+
+    public function testAddSelectorLaterPropertyOverridesEarlierOne()
+    {
+        $css = new Css\Css();
+        $css->addSelector((new Css\Selector('.foo'))->setProperty('color', 'red'));
+        $css->addSelector((new Css\Selector('.foo'))->setProperty('color', 'blue'));
+
+        $this->assertEquals('blue', $css->getSelector('.foo')->getProperty('color'));
+    }
+
     public function testGetSelector()
     {
         $css = new Css\Css();
@@ -175,6 +207,18 @@ class CssTest extends TestCase
         $this->assertTrue($css->hasSelector('html'));
     }
 
+    public function testParseCssWithTwoRulesForSameSelectorMergesProperties()
+    {
+        // Regression test: two rules for the same selector within one
+        // parseCss() call used to have the second wholesale-replace the
+        // first, losing any property only the first rule set.
+        $css = Css\Css::parseString('.foo { color: red; } .foo { font-size: 40px; }');
+
+        $selector = $css->getSelector('.foo');
+        $this->assertEquals('red', $selector->getProperty('color'));
+        $this->assertEquals('40px', $selector->getProperty('font-size'));
+    }
+
     public function testParseFile()
     {
         $css = Css\Css::parseFile(__DIR__ . '/tmp/styles.css');
@@ -183,8 +227,23 @@ class CssTest extends TestCase
 
     public function testParseUri()
     {
-        $css = Css\Css::parseUri('https://www.popphp.org/assets/app.css');
+        // file_get_contents() doesn't distinguish a URI scheme from a plain
+        // local path, so a local file path exercises parseUri() without any
+        // real network I/O (a live external URL is fragile by construction).
+        $css = Css\Css::parseUri(__DIR__ . '/tmp/styles.css');
         $this->assertTrue($css->hasSelector('body'));
+    }
+
+    public function testParseUriThrowsOnFetchFailure()
+    {
+        // Regression test: parseCssUri() passed file_get_contents()'s result
+        // straight into parseCss(string $cssString) - on a fetch failure
+        // (404, unreachable host, etc.) that's `false`, which under
+        // strict_types raised a raw TypeError instead of a clear exception.
+        // A nonexistent local path fails file_get_contents() the same way a
+        // dead URL does, so this exercises it with no network involved.
+        $this->expectException('Pop\Css\Exception');
+        Css\Css::parseUri(__DIR__ . '/tmp/does-not-exist.css');
     }
 
     public function testParseFileException()

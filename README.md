@@ -302,6 +302,19 @@ foreach ($css as $name => $selector) {
 }
 ```
 
+Adding a selector whose name matches one already present merges its properties into the existing selector
+(a later value for the same property wins) rather than replacing it outright — the same as how repeated CSS
+rules for one selector cascade:
+
+```php
+$css = new Css();
+$css->addSelector((new Selector('h1'))->setProperty('font-size', '32px'));
+$css->addSelector((new Selector('h1'))->setProperty('color', '#cc0000'));
+
+$css->getSelector('h1')->getProperty('font-size'); // '32px' - preserved
+$css->getSelector('h1')->getProperty('color');     // '#cc0000'
+```
+
 [Top](#pop-css)
 
 Media Queries
@@ -629,7 +642,8 @@ $css = Css::parseUri('http://www.domain.com/css/styles.css');
 In each case, it will return a CSS object populated with the related CSS objects from the content
 of the source.
 
-`parseFile()` throws a `Pop\Css\Exception` if the given file doesn't exist:
+`parseFile()` throws a `Pop\Css\Exception` if the given file doesn't exist, and `parseUri()` throws the same
+exception if the URI can't be fetched:
 
 ```php
 use Pop\Css\Css;
@@ -639,6 +653,12 @@ try {
     $css = Css::parseFile('path/to/missing.css');
 } catch (Exception $e) {
     // file does not exist
+}
+
+try {
+    $css = Css::parseUri('http://www.domain.com/css/missing.css');
+} catch (Exception $e) {
+    // URI could not be fetched
 }
 ```
 
